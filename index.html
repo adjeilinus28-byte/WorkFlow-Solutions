@@ -1356,6 +1356,67 @@ window.addEventListener('scroll',()=>{
   const amb=document.querySelector('.hero-ambient');
   if(amb)amb.style.transform=`translateY(calc(-50% + ${scrollY*.08}px))`;
 });
+
+/* SCROLL PROGRESS + BACK TO TOP */
+window.addEventListener('scroll',()=>{
+  const bar=document.getElementById('progress-bar');
+  if(bar){const pct=(scrollY/(document.body.scrollHeight-innerHeight))*100;bar.style.width=Math.min(pct,100)+'%';}
+  const bt=document.getElementById('back-top');
+  if(bt)bt.classList.toggle('visible',scrollY>400);
+});
+
+/* COOKIE BANNER */
+window.closeCookie=function(accepted){
+  const b=document.getElementById('cookie-banner');
+  if(b)b.style.transform='translateY(100%)';
+  localStorage.setItem('cookie-consent',accepted?'accepted':'declined');
+};
+setTimeout(()=>{
+  if(!localStorage.getItem('cookie-consent')){
+    const b=document.getElementById('cookie-banner');
+    if(b)b.classList.add('show');
+  }
+},1200);
+
+/* TYPED TEXT */
+(function(){
+  const words=['institutions','mining operations','operational businesses','any industry'];
+  let wi=0,ci=0,deleting=false;
+  const el=document.getElementById('typed-text');
+  if(!el)return;
+  function type(){
+    const w=words[wi];
+    el.textContent=deleting?w.substring(0,ci-1):w.substring(0,ci+1);
+    ci=deleting?ci-1:ci+1;
+    if(!deleting&&ci===w.length){setTimeout(()=>{deleting=true;type();},1800);return;}
+    if(deleting&&ci===0){deleting=false;wi=(wi+1)%words.length;}
+    setTimeout(type,deleting?55:90);
+  }
+  setTimeout(type,1400);
+})();
+
+/* ACTIVE NAV */
+(function(){
+  const sections=document.querySelectorAll('section[id]');
+  const links=document.querySelectorAll('.nav-links a');
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        links.forEach(l=>l.classList.remove('active-section'));
+        const a=document.querySelector('.nav-links a[href="#'+e.target.id+'"]');
+        if(a)a.classList.add('active-section');
+      }
+    });
+  },{threshold:.35});
+  sections.forEach(s=>io.observe(s));
+})();
+
+/* FAQ ACCORDION */
+window.toggleFaq=function(item){
+  const isOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));
+  if(!isOpen)item.classList.add('open');
+};
 </script>
 </body>
 </html>
