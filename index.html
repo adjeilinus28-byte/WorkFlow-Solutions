@@ -29,6 +29,11 @@ button{cursor:none}
 ::-webkit-scrollbar-track{background:#F1F5F9}
 ::-webkit-scrollbar-thumb{background:var(--amber);border-radius:2px}
 
+/* ── SCROLL PROGRESS ───────────────────────── */
+#progress-bar{position:fixed;top:0;left:0;height:3px;width:0%;z-index:9999;
+  background:linear-gradient(90deg,var(--amber),var(--amberL));
+  transition:width .1s linear;border-radius:0 2px 2px 0}
+
 /* ── CURSOR ─────────────────────────────────── */
 #cursor{
   position:fixed;width:10px;height:10px;border-radius:50%;
@@ -103,6 +108,8 @@ body.cursor-click #cursor{transform:translate(-50%,-50%) scale(0.7)}
 .nav-links{display:flex;gap:36px;list-style:none}
 .nav-links a{font-size:13.5px;color:#64748B;letter-spacing:.01em;transition:color .25s;position:relative;padding-bottom:2px}
 .nav-links a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1.5px;background:var(--amber);transition:width .3s var(--ease)}
+.nav-links a.active-section{color:#0F172A}
+.nav-links a.active-section::after{width:100%}
 .nav-links a:hover{color:#0F172A}
 .nav-links a:hover::after{width:100%}
 .nav-cta{
@@ -542,6 +549,22 @@ body.cursor-click #cursor{transform:translate(-50%,-50%) scale(0.7)}
 }
 .btn-outline-dark:hover{border-color:var(--navy);background:rgba(8,12,22,.06);transform:translateY(-2px)}
 
+
+/* ── FAQ ────────────────────────────────────── */
+#faq{padding:120px 0;background:linear-gradient(160deg,#F8FAFC 0%,#FFFBEB 50%,#F8FAFC 100%);border-top:1px solid rgba(15,23,42,.08)}
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:1000px;margin:0 auto}
+.faq-item{background:#FFFFFF;border:1px solid rgba(15,23,42,.09);border-radius:12px;overflow:hidden;transition:border-color .25s}
+.faq-item.open{border-color:rgba(245,158,11,.35)}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:20px 22px;cursor:none;gap:12px}
+.faq-q span{font-size:14.5px;font-weight:600;color:#0F172A;line-height:1.4}
+.faq-icon{width:28px;height:28px;border-radius:50%;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .3s var(--ease)}
+.faq-icon svg{width:14px;height:14px;color:var(--amber);transition:transform .3s var(--ease)}
+.faq-item.open .faq-icon{background:var(--amber)}
+.faq-item.open .faq-icon svg{transform:rotate(45deg);color:var(--navy)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s var(--ease),padding .3s}
+.faq-a p{padding:0 22px 20px;font-size:14px;color:#64748B;line-height:1.75;margin:0}
+.faq-item.open .faq-a{max-height:200px}
+@media(max-width:768px){.faq-grid{grid-template-columns:1fr}}
 /* ── CONTACT ────────────────────────────────── */
 #contact{padding:120px 0;background:linear-gradient(160deg,#EFF6FF 0%,#F8FAFC 60%,#F5F3FF 100%);border-top:1px solid rgba(15,23,42,.08)}
 .contact-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:80px;align-items:start}
@@ -587,6 +610,51 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
 .footer-bottom p{font-size:12.5px;color:#94A3B8;font-family:var(--fm)}
 .footer-bar{height:3px;background:linear-gradient(90deg,transparent,var(--amber),var(--amberL),var(--amber),transparent);margin-top:32px;border-radius:2px}
 
+/* ── COOKIE BANNER ─────────────────────────── */
+#cookie-banner{
+  position:fixed;bottom:0;left:0;right:0;z-index:800;
+  background:rgba(15,23,42,.97);backdrop-filter:blur(16px);
+  border-top:1px solid rgba(245,158,11,.3);
+  padding:16px 5%;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:20px;flex-wrap:wrap;
+  transform:translateY(100%);transition:transform .4s var(--ease);
+}
+#cookie-banner.show{transform:translateY(0)}
+#cookie-banner p{font-size:13.5px;color:#94A3B8;margin:0;flex:1;min-width:200px}
+#cookie-banner a{color:var(--amber);text-decoration:underline}
+.cookie-btns{display:flex;gap:10px;flex-shrink:0}
+.btn-cookie-accept{background:var(--amber);color:var(--navy);font-size:13px;font-weight:600;padding:8px 20px;border-radius:6px;border:none;cursor:none;transition:background .2s}
+.btn-cookie-accept:hover{background:var(--amberL)}
+.btn-cookie-decline{background:transparent;color:#64748B;font-size:13px;padding:8px 16px;border-radius:6px;border:1px solid rgba(255,255,255,.1);cursor:none;transition:all .2s}
+.btn-cookie-decline:hover{border-color:rgba(255,255,255,.25);color:#94A3B8}
+
+/* ── WHATSAPP BUTTON ───────────────────────── */
+#wa-btn{
+  position:fixed;bottom:40px;right:28px;z-index:400;
+  width:52px;height:52px;border-radius:50%;
+  background:#25D366;border:none;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 20px rgba(37,211,102,.4);
+  transition:transform .25s,box-shadow .25s;
+}
+#wa-btn:hover{transform:scale(1.1);box-shadow:0 8px 28px rgba(37,211,102,.5)}
+#wa-btn svg{width:28px;height:28px}
+
+/* ── BACK TO TOP ────────────────────────────── */
+#back-top{
+  position:fixed;bottom:100px;right:28px;z-index:400;
+  width:44px;height:44px;border-radius:50%;
+  background:var(--amber);color:var(--navy);border:none;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 20px rgba(245,158,11,.35);
+  opacity:0;pointer-events:none;
+  transition:opacity .3s,transform .3s;transform:translateY(10px);
+}
+#back-top.visible{opacity:1;pointer-events:auto;transform:translateY(0)}
+#back-top:hover{background:var(--amberL);transform:translateY(-3px)}
+#back-top svg{width:18px;height:18px}
+
 /* ── RESPONSIVE ─────────────────────────────── */
 @media(max-width:1024px){
   .hero-inner{grid-template-columns:1fr;gap:56px}
@@ -615,6 +683,9 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
 }
 @keyframes logoScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 </style>
+<!-- Google Analytics — replace G-XXXXXXXXXX with your Measurement ID from analytics.google.com -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-V52V0VFM5M"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-V52V0VFM5M');</script>
 </head>
 <body>
 <div id="cursor"></div>
@@ -623,6 +694,7 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
 <div class="noise"></div>
 
 <!-- LOADER -->
+<div id="progress-bar"></div>
 <div id="loader">
   <div class="loader-mark">
     <svg viewBox="0 0 60 42" xmlns="http://www.w3.org/2000/svg">
@@ -663,6 +735,7 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
       <li><a href="#pricing">Pricing</a></li>
       <li><a href="#industries">Industries</a></li>
       <li><a href="#custom">Custom</a></li>
+      <li><a href="#faq">FAQ</a></li>
     </ul>
     <div class="nav-cta-wrap"><a href="#contact" class="nav-cta">Get in Touch</a></div>
     <button class="nav-burger" id="burger" aria-label="Toggle menu">
@@ -701,7 +774,7 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
           <span class="word"><span class="word-inner amber">Real</span></span>
           <span class="word"><span class="word-inner">Industry</span></span>
         </h1>
-        <p class="hero-sub">Web applications, management platforms, and professional websites built for institutions, mining industries, and operational businesses — solving real problems with precision software.</p>
+        <p class="hero-sub">Web applications, management platforms, and professional websites built for <span id="typed-text" style="color:var(--amberL);font-weight:500;border-right:2px solid var(--amber);padding-right:3px"></span> — solving real problems with precision software.</p>
         <div class="hero-actions">
           <a href="#products" class="btn-primary">Explore Products <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
           <a href="#contact" class="btn-ghost">Request a Demo</a>
@@ -1016,6 +1089,58 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
   </div>
 </section>
 
+<!-- FAQ -->
+<section id="faq">
+  <div class="contain">
+    <p class="section-label rv">Got Questions?</p>
+    <h2 class="section-title rv d1">Frequently Asked Questions</h2>
+    <p class="section-sub rv d2">Everything you need to know about WorkFlow Solutions, our products, and how we work.</p>
+    <div class="faq-grid">
+
+      <div class="faq-item rv" onclick="toggleFaq(this)">
+        <div class="faq-q"><span>How does the 30-day free trial work?</span><div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div></div>
+        <div class="faq-a"><p>You get full access to every feature of your chosen application for 30 days — completely free, no credit card required. At the end of the trial you can choose to pay the one-time fee, subscribe monthly, or walk away. No obligation.</p></div>
+      </div>
+
+      <div class="faq-item rv d1" onclick="toggleFaq(this)">
+        <div class="faq-q"><span>What payment methods do you accept?</span><div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div></div>
+        <div class="faq-a"><p>We accept bank transfers, mobile money (MTN, Vodafone Cash, AirtelTigo), and major cards. For institutional clients we can also arrange invoice-based billing. Contact us to discuss your preferred method.</p></div>
+      </div>
+
+      <div class="faq-item rv" onclick="toggleFaq(this)">
+        <div class="faq-q"><span>How long does it take to get started?</span><div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div></div>
+        <div class="faq-a"><p>Access is provisioned within 24 hours of your enquiry. There is no server setup, no installation, and no lengthy onboarding process. Your team can be working inside the platform the same day.</p></div>
+      </div>
+
+      <div class="faq-item rv d1" onclick="toggleFaq(this)">
+        <div class="faq-q"><span>Can I switch between pricing plans?</span><div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div></div>
+        <div class="faq-a"><p>Yes. If you start on a monthly subscription and later want to switch to a one-time license (or vice versa), contact us and we will adjust your account accordingly. We are flexible.</p></div>
+      </div>
+
+      <div class="faq-item rv" onclick="toggleFaq(this)">
+        <div class="faq-q"><span>What industries do you serve?</span><div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div></div>
+        <div class="faq-a"><p>Our software is purpose-built for institutions (government, healthcare, education), mining and extraction operations, and operational businesses (logistics, construction, retail, manufacturing). We also build custom solutions for any sector.</p></div>
+      </div>
+
+      <div class="faq-item rv d1" onclick="toggleFaq(this)">
+        <div class="faq-q"><span>Is my organisation's data secure?</span><div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div></div>
+        <div class="faq-a"><p>Yes. All data is encrypted in transit and at rest. We never sell or share your data with third parties. You retain full ownership of all data you generate on the platform and can request an export at any time.</p></div>
+      </div>
+
+      <div class="faq-item rv" onclick="toggleFaq(this)">
+        <div class="faq-q"><span>Do you offer custom software development?</span><div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div></div>
+        <div class="faq-a"><p>Absolutely. If our off-the-shelf products do not fully fit your workflow, we design and build bespoke software from scratch. Submit a brief via our contact form and we will schedule a discovery call within 24 hours.</p></div>
+      </div>
+
+      <div class="faq-item rv d1" onclick="toggleFaq(this)">
+        <div class="faq-q"><span>What support do you provide?</span><div class="faq-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div></div>
+        <div class="faq-a"><p>All paid plans include email support with a 24-hour response time. Priority support with faster response is included on one-time license plans. For custom development clients, we offer a dedicated point of contact throughout the project.</p></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 <!-- CONTACT -->
 <section id="contact">
   <div class="contain">
@@ -1042,26 +1167,30 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
       <div class="rv-r d1">
         <div class="form-box">
           <h3 class="form-title">Send Us a Message</h3>
+          <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="contact-form" onsubmit="submitForm(event)">
+            <input type="hidden" name="form-name" value="contact"/>
+            <p style="display:none"><input name="bot-field"/></p>
           <div class="form-row">
-            <div class="form-group"><label>FIRST NAME</label><input type="text" placeholder="e.g. Kwame"/></div>
-            <div class="form-group"><label>LAST NAME</label><input type="text" placeholder="e.g. Mensah"/></div>
+            <div class="form-group"><label>FIRST NAME</label><input type="text" name="first-name" placeholder="e.g. Kwame" required/></div>
+            <div class="form-group"><label>LAST NAME</label><input type="text" name="last-name" placeholder="e.g. Mensah" required/></div>
           </div>
           <div class="form-row">
-            <div class="form-group"><label>EMAIL ADDRESS</label><input type="email" placeholder="you@company.com"/></div>
-            <div class="form-group"><label>ORGANISATION</label><input type="text" placeholder="Your company or institution"/></div>
+            <div class="form-group"><label>EMAIL ADDRESS</label><input type="email" name="email" placeholder="you@company.com" required/></div>
+            <div class="form-group"><label>ORGANISATION</label><input type="text" name="organisation" placeholder="Your company or institution"/></div>
           </div>
           <div class="form-row" style="grid-template-columns:1fr;margin-bottom:14px">
             <div class="form-group full"><label>INQUIRY TYPE</label>
-              <select><option value="">Select an inquiry type…</option><option>Start a Free Trial</option><option>Subscription Plan Info</option><option>Custom Development</option><option>Technical Support</option><option>General Question</option></select>
+              <select name="inquiry-type"><option value="">Select an inquiry type…</option><option>Start a Free Trial</option><option>Subscription Plan Info</option><option>Custom Development</option><option>Website Development</option><option>Technical Support</option><option>General Question</option></select>
             </div>
           </div>
           <div class="form-row" style="grid-template-columns:1fr;margin-bottom:20px">
-            <div class="form-group full"><label>MESSAGE</label><textarea placeholder="Tell us about your needs, team size, and what you're looking to solve…"></textarea></div>
+            <div class="form-group full"><label>MESSAGE</label><textarea name="message" placeholder="Tell us about your needs, team size, and what you're looking to solve…" required></textarea></div>
           </div>
-          <button class="btn-primary" id="form-btn" onclick="submitForm(event)" style="width:100%;justify-content:center">
+          <button type="submit" class="btn-primary" id="form-btn" style="width:100%;justify-content:center">
             Send Message
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
           </button>
+          </form>
         </div>
       </div>
     </div>
@@ -1069,6 +1198,12 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
 </section>
 
 <!-- FOOTER -->
+<a id="wa-btn" href="https://wa.me/233274145249?text=Hi%20WorkFlow%20Solutions%2C%20I%27d%20like%20to%20know%20more%20about%20your%20services." target="_blank" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 24 24" fill="#ffffff" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+<button id="back-top" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg></button>
 <footer>
   <div class="footer-inner">
     <div class="footer-top">
@@ -1095,10 +1230,29 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
     <div class="footer-bottom">
       <p>© 2026 WorkFlow Solutions. All rights reserved.</p>
       <p>workflow-app.net · admin@workflow-app.net</p>
+      <div style="display:flex;gap:14px;align-items:center">
+        <a href="https://linkedin.com/company/workflowsolutions" target="_blank" aria-label="LinkedIn" style="color:#94A3B8;transition:color .2s;display:flex" onmouseover="this.style.color='#F59E0B'" onmouseout="this.style.color='#94A3B8'">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="https://twitter.com/workflowsolutions" target="_blank" aria-label="Twitter / X" style="color:#94A3B8;transition:color .2s;display:flex" onmouseover="this.style.color='#F59E0B'" onmouseout="this.style.color='#94A3B8'">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+        <a href="https://facebook.com/workflowsolutions" target="_blank" aria-label="Facebook" style="color:#94A3B8;transition:color .2s;display:flex" onmouseover="this.style.color='#F59E0B'" onmouseout="this.style.color='#94A3B8'">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
+      </div>
     </div>
     <div class="footer-bar"></div>
   </div>
 </footer>
+
+<div id="cookie-banner">
+  <p>We use cookies to improve your experience on workflow-app.net. By continuing to browse, you agree to our <a href="#">Privacy Policy</a>.</p>
+  <div class="cookie-btns">
+    <button class="btn-cookie-decline" onclick="closeCookie(false)">Decline</button>
+    <button class="btn-cookie-accept" onclick="closeCookie(true)">Accept All</button>
+  </div>
+</div>
 
 <script>
 /* CURSOR */
