@@ -674,6 +674,48 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
 .prod-url:hover{color:#D97706}
 .prod-url svg{width:11px;height:11px;flex-shrink:0}
 
+/* ── VIDEO BAND ─────────────────────────────── */
+#video{padding:118px 0;background:linear-gradient(180deg,#FFFFFF 0%,#F8FAFC 100%);
+  border-top:1px solid rgba(15,23,42,.07)}
+.video-head{max-width:760px;margin:0 auto 48px;text-align:center}
+.video-shell{max-width:1000px;margin:0 auto;position:relative}
+.video-frame{position:relative;width:100%;aspect-ratio:16/9;border-radius:18px;overflow:hidden;
+  background:#0F172A;border:1px solid rgba(15,23,42,.12);
+  box-shadow:0 30px 70px rgba(15,23,42,.18)}
+.video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.video-facade{position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;
+  background:#0F172A center/cover no-repeat;cursor:pointer;display:block;
+  transition:transform .5s var(--ease)}
+.video-facade::after{content:'';position:absolute;inset:0;background:rgba(8,12,22,0);
+  transition:background .35s var(--ease)}
+.video-facade:hover{transform:scale(1.012)}
+.video-facade:hover::after{background:rgba(8,12,22,.16)}
+.play-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:84px;height:84px;border-radius:50%;background:var(--amber);
+  display:flex;align-items:center;justify-content:center;z-index:2;
+  box-shadow:0 12px 40px rgba(245,158,11,.45);transition:all .35s var(--ease)}
+.video-facade:hover .play-btn{transform:translate(-50%,-50%) scale(1.09);
+  box-shadow:0 16px 52px rgba(245,158,11,.6)}
+.play-btn::before{content:'';position:absolute;inset:-14px;border-radius:50%;
+  border:1.5px solid rgba(245,158,11,.45);animation:playPulse 2.6s ease-out infinite}
+@keyframes playPulse{0%{transform:scale(.92);opacity:.9}70%{transform:scale(1.28);opacity:0}100%{opacity:0}}
+.play-btn svg{width:28px;height:28px;margin-left:5px;fill:#0F172A}
+.video-meta{position:absolute;right:18px;bottom:18px;z-index:2;display:flex;gap:8px}
+.vm-chip{font-family:var(--fm);font-size:11px;letter-spacing:.06em;color:#E2E8F0;
+  background:rgba(8,12,22,.62);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.16);padding:5px 12px;border-radius:99px}
+.video-note{text-align:center;margin-top:22px;font-family:var(--fm);font-size:12px;
+  color:#94A3B8;line-height:1.9}
+.video-note a{color:#D97706;text-decoration:none;border-bottom:1px solid rgba(217,119,6,.35)}
+.video-note a:hover{border-color:#D97706}
+@media(max-width:768px){
+  #video{padding:88px 0}
+  .play-btn{width:64px;height:64px}.play-btn svg{width:22px;height:22px}
+  .video-frame{border-radius:14px}
+  .video-meta{right:12px;bottom:12px}
+}
+@media(prefers-reduced-motion:reduce){.play-btn::before{animation:none}}
+
 /* ── PLATFORM / UNDER THE HOOD ──────────────── */
 #platform{padding:120px 0;background:#0F172A;position:relative;overflow:hidden}
 #platform::before{content:'';position:absolute;inset:0;pointer-events:none;
@@ -1005,6 +1047,34 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
         </div>
       </div>
 
+    </div>
+  </div>
+</section>
+
+<!-- VIDEO -->
+<section id="video">
+  <div class="contain">
+    <div class="video-head">
+      <p class="section-label rv">See it working</p>
+      <h2 class="section-title rv d1">A minute inside the platform</h2>
+      <p class="section-sub rv d2">Rather than take our word for it — here's what the software actually looks like in an operation like yours.</p>
+    </div>
+    <div class="video-shell rv d1">
+      <div class="video-frame">
+        <button class="video-facade" id="video-facade"
+                data-yt="REPLACE_WITH_YOUTUBE_ID"
+                style="background-image:url('/video-poster.jpg')"
+                aria-label="Play the WorkFlow Solutions overview video, 1 minute">
+          <span class="play-btn">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+          </span>
+          <span class="video-meta">
+            <span class="vm-chip">1:00</span>
+            <span class="vm-chip">Sound on</span>
+          </span>
+        </button>
+      </div>
+      <p class="video-note rv">Loads only when you press play · Prefer a walkthrough on your own data? <a href="#contact">Book a demo</a></p>
     </div>
   </div>
 </section>
@@ -1426,7 +1496,7 @@ if(!coarse && !reduce){
       ring.style.left=rx+'px'; ring.style.top=ry+'px';
       requestAnimationFrame(loop);
     })();
-    document.querySelectorAll('a,button,.prod-card,.industry-card,.price-card,.pr-step,.pf-item,.offer')
+    document.querySelectorAll('a,button,.prod-card,.industry-card,.price-card,.pr-step,.pf-item,.offer,.video-facade')
       .forEach(function(el){
         el.addEventListener('mouseenter',function(){document.body.classList.add('cursor-hover')});
         el.addEventListener('mouseleave',function(){document.body.classList.remove('cursor-hover')});
@@ -1553,6 +1623,40 @@ if(form){
       status.innerHTML='That didn\'t send. Please email <a href="mailto:admin@workflow-app.net" style="color:inherit;text-decoration:underline">admin@workflow-app.net</a> or message us on <a href="https://wa.me/233274145249" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline">WhatsApp</a>.';
     });
   });
+}
+
+/* ── VIDEO FACADE ───────────────────────────
+   Nothing from YouTube is requested until the visitor presses play.
+   A bare iframe would pull ~1-2MB on page load; this pulls a 52KB poster. */
+var facade=document.getElementById('video-facade');
+if(facade){
+  facade.addEventListener('click',function(){
+    var id=facade.dataset.yt;
+    if(!id||id==='REPLACE_WITH_YOUTUBE_ID'){
+      facade.insertAdjacentHTML('afterend',
+        '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;'+
+        'text-align:center;padding:32px;color:#94A3B8;font-size:14px;line-height:1.7">'+
+        'Video not connected yet — add the YouTube ID to <code>data-yt</code>.</div>');
+      facade.remove(); return;
+    }
+    var f=document.createElement('iframe');
+    f.src='https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0&modestbranding=1&playsinline=1';
+    f.title='WorkFlow Solutions overview';
+    f.allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
+    f.allowFullscreen=true;
+    facade.parentNode.appendChild(f);
+    facade.remove();
+    if(window.gtag)gtag('event','video_play',{event_category:'engagement'});
+  });
+  /* Warm the connection on intent only, so idle visitors pay nothing */
+  var warmed=false;
+  facade.addEventListener('mouseenter',function(){
+    if(warmed)return; warmed=true;
+    ['https://www.youtube-nocookie.com','https://i.ytimg.com','https://fonts.gstatic.com']
+      .forEach(function(h){
+        var l=document.createElement('link'); l.rel='preconnect'; l.href=h; document.head.appendChild(l);
+      });
+  },{once:true});
 }
 
 /* ── PARALLAX + PROGRESS + BACK TO TOP ──────── */
