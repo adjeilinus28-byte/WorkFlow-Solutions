@@ -23,7 +23,7 @@ The contact form posts to the `site-lead` edge function, which stores the messag
 
 ## One-time setup
 
-1. **Netlify build hook** — Netlify → *Project configuration → Build & deploy → Continuous deployment → Build hooks → Add build hook* (name it "Admin publish", branch `main`). Copy the URL into Supabase → WFS-Ops-Platform → *Edge Functions → Secrets* as `NETLIFY_BUILD_HOOK_URL`. Until then, Publish saves the version and the site picks it up on the next deploy.
+1. **Netlify build hook** — Netlify → *Project configuration → Build & deploy → Continuous deployment → Build hooks → Add build hook* (name it "Admin publish", branch `main`). Copy its URL (or the whole `curl` line Netlify shows) into Supabase → WFS-Ops-Platform → *Edge Functions → Secrets* as `NETLIFY_BUILD_HOOK_URL`. Until then, Publish saves the version and the site picks it up on the next deploy.
 2. **Sign-in links** — Supabase → *Authentication → URL Configuration → Redirect URLs*: add `https://workflow-app.net/admin/` (and `https://*--workflowsolution.netlify.app/admin/` for deploy previews). Invite and password-reset emails land back in the admin.
 3. **Lead alert emails** (optional) — Brevo → *SMTP & API → API keys*: create a key and add it to the Supabase secrets as `BREVO_API_KEY`. Alerts go to `admin@workflow-app.net` from the verified sender `admin@workflow-app.net`; change with `LEAD_ALERT_EMAIL` / `LEAD_ALERT_FROM`.
 4. **Two database functions** — run `supabase/manual/site_delete_functions.sql` in the Supabase SQL editor. They delete a lead and remove a person's access; until they're added, those two buttons say a database update is needed.

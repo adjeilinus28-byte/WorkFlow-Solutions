@@ -187,6 +187,29 @@ Deno.test('site-publish saves a version as the user and triggers the Netlify bui
   assertEquals(mark.search.get('id'), 'eq.8')
 })
 
+Deno.test('site-publish takes the hook address out of the curl line Netlify shows', async () => {
+  world.reset()
+  Deno.env.set('NETLIFY_BUILD_HOOK_URL', ' curl -X POST -d {} https://api.netlify.com/build_hooks/abc\n')
+  world.rpc.site_get_content = draftOk
+  world.rpc.site_create_publication = () => ({ body: 10 })
+  const body = await (await publish(post({}, { authorization: 'Bearer user' }))).json()
+  Deno.env.delete('NETLIFY_BUILD_HOOK_URL')
+  assertEquals(body.deploy_status, 'triggered')
+  assertEquals(world.find('POST', 'https://api.netlify.com/build_hooks/abc').length, 1)
+})
+
+Deno.test('site-publish says so when the hook secret has no address in it', async () => {
+  world.reset()
+  Deno.env.set('NETLIFY_BUILD_HOOK_URL', 'Admin publish')
+  world.rpc.site_get_content = draftOk
+  world.rpc.site_create_publication = () => ({ body: 11 })
+  const body = await (await publish(post({}, { authorization: 'Bearer user' }))).json()
+  Deno.env.delete('NETLIFY_BUILD_HOOK_URL')
+  assertEquals(body.deploy_status, 'failed')
+  assertMatch(body.deploy_error, /https:\/\//)
+  assertEquals(world.calls.filter((c) => c.path.includes('netlify')).length, 0)
+})
+
 Deno.test('site-publish still saves the version when the build hook is missing', async () => {
   world.reset()
   world.rpc.site_get_content = draftOk

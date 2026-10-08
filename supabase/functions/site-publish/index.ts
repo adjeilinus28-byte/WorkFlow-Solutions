@@ -7,7 +7,8 @@
 // creating a new one, for when a build hook call failed.
 //
 // Secret (Supabase → Edge Functions → Secrets):
-//   NETLIFY_BUILD_HOOK_URL   from Netlify → Site configuration → Build hooks.
+//   NETLIFY_BUILD_HOOK_URL   from Netlify → Site configuration → Build hooks:
+//   the hook's address, or the whole curl line Netlify shows for it.
 //   Without it versions are still saved, marked "no_hook", and go live with
 //   the next deploy.
 import { createClient } from 'npm:@supabase/supabase-js@2.45.4'
@@ -16,8 +17,12 @@ import { validateContent, withDefaults } from '../_shared/render.js'
 import defaults from '../_shared/defaults.json' with { type: 'json' }
 
 async function triggerBuild(id: number): Promise<{ status: string; error: string | null }> {
-  const hook = env('NETLIFY_BUILD_HOOK_URL')
-  if (!hook) return { status: 'no_hook', error: 'The Netlify build hook is not set up yet' }
+  const value = env('NETLIFY_BUILD_HOOK_URL').trim()
+  if (!value) return { status: 'no_hook', error: 'The Netlify build hook is not set up yet' }
+  // Netlify shows each hook as a command (curl -X POST -d {} https://…), so
+  // take the address out of whatever was pasted
+  const hook = value.match(/https:\/\/[^\s'"]+/)?.[0]
+  if (!hook) return { status: 'failed', error: 'NETLIFY_BUILD_HOOK_URL has no https:// build hook address in it' }
   try {
     const url = `${hook}${hook.includes('?') ? '&' : '?'}trigger_title=${encodeURIComponent(`Published from the admin (version ${id})`)}`
     const res = await fetch(url, { method: 'POST', body: '{}' })
