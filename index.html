@@ -634,6 +634,10 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
   padding:4px 11px;border-radius:99px}
 .status-dot{width:6px;height:6px;border-radius:50%;background:#22C55E;
   box-shadow:0 0 0 0 rgba(34,197,94,.5);animation:livePulse 2.4s ease-out infinite}
+.status-soon{display:inline-flex;align-items:center;font-family:var(--fm);
+  font-size:10.5px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;
+  color:#B45309;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.35);
+  padding:4px 11px;border-radius:99px}
 @keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,.45)}70%{box-shadow:0 0 0 7px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
 .prod-sector{font-family:var(--fm);font-size:11px;color:#64748B;letter-spacing:.06em;
   text-transform:uppercase;margin-bottom:6px}
@@ -752,6 +756,15 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
 .form-status.err{display:block;color:#B91C1C;background:rgba(239,68,68,.07);
   border:1px solid rgba(239,68,68,.3)}
 
+/* ── ANNOUNCEMENT BAR (switched on from the admin) ── */
+.announce{position:fixed;top:0;left:0;right:0;z-index:510;height:38px;
+  display:flex;align-items:center;justify-content:center;padding:0 5%;
+  background:var(--navy);color:#F1F5F9;font-size:13.5px;line-height:1.3}
+.announce p{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.announce a{color:var(--amber);font-weight:600;text-decoration:underline;text-underline-offset:2px}
+body:has(.announce) #nav{top:38px}
+body:has(.announce) #hero{padding-top:102px}
+
 /* ── RESPONSIVE ─────────────────────────────────
    Kept after every base rule it overrides — at equal specificity
    the later rule wins, so a breakpoint placed earlier is ignored. */
@@ -772,6 +785,8 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
   .nav-burger{display:flex}
   #nav.mobile-open .nav-links{display:flex;flex-direction:column;position:fixed;top:64px;left:0;right:0;background:rgba(248,250,252,.98);border-bottom:1px solid rgba(15,23,42,.1);padding:24px 5%;gap:18px;backdrop-filter:blur(20px);z-index:500}
   #nav.mobile-open .nav-mobile-cta{display:block;margin-top:6px}
+  body:has(.announce) #nav.mobile-open .nav-links{top:102px}
+  .announce{font-size:12.5px}
   .hero-title{font-size:clamp(36px,11vw,60px)}
   .industry-grid,.products-grid,.pricing-grid,.platform-grid,.process-grid,.custom-offers{grid-template-columns:1fr}
   .hero-stats{grid-template-columns:1fr 1fr}
@@ -809,6 +824,7 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
+<!--cms:announcement--><!--/cms:announcement-->
 <div id="cursor"></div>
 <div id="cursor-ring"></div>
 <div class="grid-bg"></div>
@@ -871,6 +887,7 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
   <div class="contain">
     <div class="hero-inner">
       <div>
+        <!--cms:hero-->
         <div class="hero-eyebrow"><span class="eyebrow-pulse"></span>Operations software · Built in Ghana</div>
         <h1 class="hero-title">
           <span class="word"><span class="word-inner">Run</span></span>
@@ -890,6 +907,7 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
           <div class="glass-stat"><div class="stat-num" data-count="3">3</div><div class="stat-label">Sectors served</div></div>
           <div class="glass-stat"><div class="stat-num" data-count="30">30</div><div class="stat-label">Day free trial</div></div>
         </div>
+        <!--/cms:hero-->
       </div>
       <div class="hero-right">
         <div class="dash-glow"></div>
@@ -946,6 +964,7 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
 <!-- PRODUCTS -->
 <section id="products">
   <div class="contain">
+    <!--cms:products-->
     <div class="products-head">
       <div>
         <p class="section-label rv">Products</p>
@@ -1046,6 +1065,7 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
       </div>
 
     </div>
+    <!--/cms:products-->
   </div>
 </section>
 
@@ -1060,6 +1080,7 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
     </div>
     <div class="video-shell rv d1">
       <div class="video-frame">
+        <!--cms:video-->
         <button class="video-facade" id="video-facade"
                 data-yt="REPLACE_WITH_YOUTUBE_ID"
                 style="background-image:url('/video-poster.jpg')"
@@ -1072,6 +1093,7 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
             <span class="vm-chip">Sound on</span>
           </span>
         </button>
+        <!--/cms:video-->
       </div>
       <p class="video-note rv">Loads only when you press play · Prefer a walkthrough on your own data? <a href="#contact">Book a demo</a></p>
     </div>
@@ -1151,6 +1173,7 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
 <!-- PRICING -->
 <section id="pricing">
   <div class="contain">
+    <!--cms:pricing-->
     <div class="pricing-intro">
       <p class="section-label rv">Pricing</p>
       <h2 class="section-title rv d1">Quoted, not guessed</h2>
@@ -1198,6 +1221,7 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
       </div>
     </div>
     <p class="pricing-foot rv">Bank transfer · Mobile money (MTN, Telecel, AirtelTigo) · Card via Paystack · Invoice billing for institutions</p>
+    <!--/cms:pricing-->
   </div>
 </section>
 
@@ -1294,6 +1318,7 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
     <p class="section-label rv">Got questions?</p>
     <h2 class="section-title rv d1">Frequently asked questions</h2>
     <p class="section-sub rv d2">The things people ask before they commit. If yours isn't here, send it over.</p>
+    <!--cms:faq-->
     <div class="faq-grid">
 
       <div class="faq-item rv">
@@ -1337,6 +1362,7 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
       </div>
 
     </div>
+    <!--/cms:faq-->
   </div>
 </section>
 
@@ -1348,6 +1374,7 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
         <p class="section-label rv">Contact</p>
         <h2 class="contact-title rv d1">Let's talk about<br>your operation</h2>
         <p class="contact-sub rv d2">Tell us your sector, team size and what's currently on spreadsheets — that's enough for us to come back with a demo and a figure. We reply within one business day.</p>
+        <!--cms:contact-->
         <div class="contact-details rv d3">
           <div class="contact-item">
             <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
@@ -1366,6 +1393,7 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
             <div><div class="contact-item-label">Response time</div><div class="contact-item-val">Within one business day</div></div>
           </div>
         </div>
+        <!--/cms:contact-->
       </div>
       <div class="rv-r d1">
         <div class="form-box">
@@ -1441,11 +1469,13 @@ footer{padding:72px 5% 32px;border-top:1px solid rgba(15,23,42,.08);position:rel
         <p>Operations software for mining, industry and institutions. Built in Ghana. Streamline Every Layer.</p>
       </div>
       <div class="footer-col"><h4>Products</h4><ul>
+        <!--cms:footer-products-->
         <li><a href="https://wfs-erp.netlify.app" target="_blank" rel="noopener noreferrer">WFS ERP</a></li>
         <li><a href="https://wfs-tsfmonitor.netlify.app" target="_blank" rel="noopener noreferrer">TSF Monitor</a></li>
         <li><a href="https://wfs-fleetmanager.netlify.app" target="_blank" rel="noopener noreferrer">Fleet Manager</a></li>
         <li><a href="https://wfs-salesmanager.netlify.app" target="_blank" rel="noopener noreferrer">Sales Manager</a></li>
         <li><a href="https://medistaff.manageflo.net" target="_blank" rel="noopener noreferrer">MediStaff</a></li>
+        <!--/cms:footer-products-->
       </ul></div>
       <div class="footer-col"><h4>Solutions</h4><ul>
         <li><a href="#industries">Mining</a></li>
