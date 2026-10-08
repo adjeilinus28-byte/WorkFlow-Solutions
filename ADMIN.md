@@ -8,7 +8,7 @@
 | Editor | Website content, Publish, Publish history |
 | Sales | the Leads inbox |
 
-Logins are shared with the WFS-Ops-Platform Supabase project, but access is separate: a website role gives nothing in the ops platform, and an ops role gives nothing here. People added from the admin get the ops role `website`, which has no ops access.
+Logins are shared with the WFS-Ops-Platform Supabase project, but access is separate: a website role gives nothing in the ops platform, and an ops role gives nothing here. People added from the admin are marked `website` in their Supabase app metadata, so the ops platform creates no profile for them and they have no ops access.
 
 ## How publishing works
 

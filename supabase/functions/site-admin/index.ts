@@ -6,10 +6,11 @@
 //       Creates the login with a one-time password, returned once, for the
 //       admin to pass on (for when invite emails aren't set up).
 //
-// New logins are marked role "website" in the ops platform's profiles, which
-// gives them no access there. People who already have a login are added by the
-// site_user_add_existing database function instead; this function falls back
-// to that when the email is already registered.
+// New logins are marked role "website" in their app metadata (which only the
+// service role can set) and user metadata, so the ops platform creates no
+// profile for them and they get no access there. People who already have a
+// login are added by the site_user_add_existing database function instead;
+// this function falls back to that when the email is already registered.
 import { createClient } from 'npm:@supabase/supabase-js@2.45.4'
 import { env, json, originAllowed, preflight } from '../_shared/http.ts'
 
@@ -45,6 +46,7 @@ Deno.serve(async (req) => {
 
   const service = createClient(env('SUPABASE_URL'), env('SUPABASE_SERVICE_ROLE_KEY'), { auth: { persistSession: false, autoRefreshToken: false } })
   const meta = { role: 'website', full_name: String(body.full_name || '').trim().slice(0, 80) || undefined }
+  const appMeta = { role: 'website' }
   let userId: string | null = null
   let password: string | null = null
 
@@ -57,9 +59,15 @@ Deno.serve(async (req) => {
       return json(req, 400, { error: `Couldn't send the invite: ${error.message}. Try "Set a password" instead.` })
     }
     userId = data?.user?.id ?? null
+    // An invite can't set app metadata. The user metadata role already kept the
+    // ops platform from creating a profile, so this only records it for later.
+    if (userId) {
+      const { error: metaErr } = await service.auth.admin.updateUserById(userId, { app_metadata: appMeta })
+      if (metaErr) console.error('Marking invited login as website-only failed', metaErr)
+    }
   } else {
     password = tempPassword()
-    const { data, error } = await service.auth.admin.createUser({ email, password, email_confirm: true, user_metadata: meta })
+    const { data, error } = await service.auth.admin.createUser({ email, password, email_confirm: true, user_metadata: meta, app_metadata: appMeta })
     if (error && !/already been registered|already registered|exists/i.test(error.message)) {
       return json(req, 400, { error: `Couldn't create the login: ${error.message}` })
     }

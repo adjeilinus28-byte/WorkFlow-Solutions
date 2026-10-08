@@ -40,6 +40,8 @@ globalThis.fetch = async (input: string | URL | Request, init?: RequestInit) => 
   if (url.origin === SB && url.pathname === '/rest/v1/site_leads' && (req.method === 'HEAD' || req.method === 'GET'))
     return new Response(null, { status: 200, headers: { 'content-range': `*/${world.leadCount}` } })
   if (url.origin === SB && url.pathname.startsWith('/rest/v1/')) return reply(201, undefined)
+  if (url.origin === SB && url.pathname.startsWith('/auth/v1/admin/users/') && req.method === 'PUT')
+    return reply(200, { id: url.pathname.split('/').pop(), app_metadata: body.app_metadata })
   if (url.origin === SB && url.pathname === '/auth/v1/invite' || url.pathname === '/auth/v1/admin/users') {
     if (world.authUsers.has(body.email)) return reply(422, { code: 422, msg: 'A user with this email address has already been registered' })
     return reply(200, { id: 'new-user-id', email: body.email, user_metadata: body.data ?? body.user_metadata })
@@ -222,6 +224,8 @@ Deno.test('site-admin invites a new person with website-only ops access', async 
   const [invite] = world.find('POST', `${SB}/auth/v1/invite`)
   assertEquals(invite.body.email, 'new@example.com')
   assertEquals(invite.body.data.role, 'website', 'ops platform profile gets a role with no access')
+  const [mark] = world.find('PUT', `${SB}/auth/v1/admin/users/new-user-id`)
+  assertEquals(mark.body.app_metadata, { role: 'website' }, 'role recorded where only the service role can set it')
   assertEquals(invite.search.get('redirect_to'), 'https://deploy-preview-3--workflowsolution.netlify.app/admin/')
   const [grant] = world.find('POST', `${SB}/rest/v1/site_users`)
   assertEquals(grant.body, { user_id: 'new-user-id', role: 'editor', created_by: 'admin-id' })
@@ -241,6 +245,7 @@ Deno.test('site-admin can create a login with a one-time password', async () => 
   const [create] = world.find('POST', `${SB}/auth/v1/admin/users`)
   assertEquals(create.body.email_confirm, true)
   assertEquals(create.body.user_metadata.role, 'website')
+  assertEquals(create.body.app_metadata, { role: 'website' })
 })
 
 Deno.test('site-admin gives an existing login access instead of failing', async () => {
@@ -250,6 +255,7 @@ Deno.test('site-admin gives an existing login access instead of failing', async 
   const body = await (await admin(post({ email: 'ops@example.com', role: 'sales', mode: 'invite' }, { authorization: 'Bearer user' }))).json()
   assertEquals(body, { email: 'ops@example.com', role: 'sales', existing: true })
   assertEquals(world.find('POST', `${SB}/rest/v1/site_users`).length, 0)
+  assertEquals(world.calls.filter((c) => c.method === 'PUT').length, 0, "an existing login's metadata is left alone")
 })
 
 Deno.test('site-admin checks its input', async () => {
