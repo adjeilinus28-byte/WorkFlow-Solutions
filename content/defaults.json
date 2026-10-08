@@ -1,0 +1,257 @@
+{
+  "announcement": {
+    "enabled": false,
+    "text": "",
+    "link_label": "",
+    "link_url": ""
+  },
+  "hero": {
+    "eyebrow": "Operations software · Built in Ghana",
+    "headline_line1": "Run every layer",
+    "headline_line2": "of your operation",
+    "highlight": "layer",
+    "sub": "Purpose-built software for mine sites, hospitals, distributors and institutions — replacing spreadsheets and paper trails with live control over people, assets, inventory and compliance, in one platform.",
+    "primary_label": "Explore solutions",
+    "primary_link": "#products",
+    "secondary_label": "Book a demo",
+    "secondary_link": "#contact",
+    "stats": [
+      {
+        "value": "5",
+        "label": "Platforms in production"
+      },
+      {
+        "value": "3",
+        "label": "Sectors served"
+      },
+      {
+        "value": "30",
+        "label": "Day free trial"
+      }
+    ]
+  },
+  "products": {
+    "title": "Five platforms, live today",
+    "note": "All built on one multi-tenant core",
+    "items": [
+      {
+        "show": true,
+        "icon": "grid",
+        "status": "live",
+        "sector": "Mining & industrial",
+        "name": "WFS ERP",
+        "short_name": "",
+        "description": "The operations backbone. Everything that used to live in six separate spreadsheets — staff, payroll, stock, assets, attendance, approvals — running as one system with role-based access throughout.",
+        "modules": [
+          "HR & payroll",
+          "Inventory",
+          "Asset register",
+          "Leave & attendance",
+          "Approvals",
+          "Finance"
+        ],
+        "url": "https://wfs-erp.netlify.app",
+        "link_note": "",
+        "cta_label": "Book a demo",
+        "cta_link": "#contact"
+      },
+      {
+        "show": true,
+        "icon": "mountain",
+        "status": "live",
+        "sector": "Mining",
+        "name": "WFS TSF Monitor",
+        "short_name": "TSF Monitor",
+        "description": "Tailings storage facility monitoring. Piezometer and beach readings, freeboard and storage capacity tracking, deposition planning, and an alert in someone's inbox the moment a threshold is breached.",
+        "modules": [
+          "Instrumentation",
+          "Freeboard",
+          "Storage capacity",
+          "Deposition planning",
+          "Alerts"
+        ],
+        "url": "https://wfs-tsfmonitor.netlify.app",
+        "link_note": "",
+        "cta_label": "Book a demo",
+        "cta_link": "#contact"
+      },
+      {
+        "show": true,
+        "icon": "truck",
+        "status": "live",
+        "sector": "Fleet & logistics",
+        "name": "WFS Fleet Manager",
+        "short_name": "Fleet Manager",
+        "description": "Vehicles, drivers, trips, fuel and maintenance schedules across every site. Built offline-tolerant, because haulage routes rarely have reliable coverage the whole way.",
+        "modules": [
+          "Vehicles",
+          "Drivers",
+          "Trip logs",
+          "Fuel",
+          "Maintenance"
+        ],
+        "url": "https://wfs-fleetmanager.netlify.app",
+        "link_note": "",
+        "cta_label": "Book a demo",
+        "cta_link": "#contact"
+      },
+      {
+        "show": true,
+        "icon": "bag",
+        "status": "live",
+        "sector": "Retail & SME",
+        "name": "WFS Sales Manager",
+        "short_name": "Sales Manager",
+        "description": "Business management for shops and distributors, with real double-entry accounting underneath. Stock, sales, payments and fixed assets post straight to the ledger — so the balance sheet is the actual balance sheet.",
+        "modules": [
+          "Sales & stock",
+          "Double-entry ledger",
+          "Balance sheet",
+          "Fixed assets",
+          "Payments"
+        ],
+        "url": "https://wfs-salesmanager.netlify.app",
+        "link_note": "",
+        "cta_label": "Book a demo",
+        "cta_link": "#contact"
+      },
+      {
+        "show": true,
+        "icon": "hospital",
+        "status": "live",
+        "sector": "Healthcare",
+        "name": "MediStaff",
+        "short_name": "",
+        "description": "Hospital staff management — rosters, shift allocation, leave and departmental scheduling, with email notifications wired into every approval step so requests don't stall on someone's desk.",
+        "modules": [
+          "Rosters",
+          "Shifts",
+          "Leave",
+          "Departments",
+          "Notifications"
+        ],
+        "url": "https://medistaff.manageflo.net",
+        "link_note": "",
+        "cta_label": "Book a demo",
+        "cta_link": "#contact"
+      },
+      {
+        "show": true,
+        "icon": "star",
+        "status": "custom",
+        "sector": "Anything else",
+        "name": "Something built for you",
+        "short_name": "",
+        "description": "If none of the five fit how you actually work, we scope and build one that does. Same foundations, shaped to your operation rather than the other way round.",
+        "modules": [
+          "Discovery",
+          "Custom UI",
+          "Integrations",
+          "Maintenance"
+        ],
+        "url": "",
+        "link_note": "Quoted per project",
+        "cta_label": "See how",
+        "cta_link": "#custom"
+      }
+    ]
+  },
+  "video": {
+    "youtube_id": "",
+    "duration": "1:00"
+  },
+  "pricing": {
+    "title": "Quoted, not guessed",
+    "intro": "A two-person shop and a three-site mine need very different setups, so we price on what you actually need — team size, sites and modules. Tell us those three things and you'll have a figure within one business day. Every engagement starts with a 30-day free trial.",
+    "plans": [
+      {
+        "style": "amber",
+        "name": "One-time licence",
+        "quote": "Pay once,\nkeep it",
+        "period": "Per platform",
+        "description": "A single payment gives permanent access to the platform. No recurring billing, and future updates are included.",
+        "features": [
+          "30-day free trial first",
+          "No recurring billing",
+          "Future updates included",
+          "Priority support"
+        ],
+        "cta_label": "Get a quote",
+        "cta_link": "#contact"
+      },
+      {
+        "style": "featured",
+        "name": "Monthly subscription",
+        "quote": "Per platform,\nper month",
+        "period": "Scales with your team",
+        "description": "For platforms under continuous development. Full features, new capability as it ships, and dedicated support.",
+        "features": [
+          "30-day free trial first",
+          "Cancel anytime",
+          "Continuous feature rollout",
+          "Dedicated support"
+        ],
+        "cta_label": "Start free trial",
+        "cta_link": "#contact"
+      },
+      {
+        "style": "purple",
+        "name": "Custom build",
+        "quote": "Scoped\nper project",
+        "period": "Fixed milestones",
+        "description": "Bespoke software or a website, priced after discovery so you know the number before development starts.",
+        "features": [
+          "Requirements discovery",
+          "Priced before we build",
+          "Paid by milestone",
+          "Maintenance optional"
+        ],
+        "cta_label": "Send a brief",
+        "cta_link": "#custom"
+      }
+    ],
+    "payment_methods": "Bank transfer · Mobile money (MTN, Telecel, AirtelTigo) · Card via Paystack · Invoice billing for institutions"
+  },
+  "faq": {
+    "items": [
+      {
+        "q": "Why aren't your prices listed?",
+        "a": "Because a published figure would be wrong for most people reading it. What you pay depends on team size, how many sites you run and which modules you need — a single-branch shop and a three-site mine are not the same product. Send us those details and we'll give you an exact figure within one business day, with no obligation attached to it."
+      },
+      {
+        "q": "How does the 30-day free trial work?",
+        "a": "Your organisation is set up as its own tenant with every feature open for 30 days. No card required. At the end you can take the one-time licence, move to a monthly plan, or stop — and if you stop, you can export your data on the way out."
+      },
+      {
+        "q": "Is our data separated from other organisations?",
+        "a": "Yes, and it's enforced in the database rather than the interface. Every platform uses PostgreSQL row-level security, so a query for records outside your organisation returns nothing — regardless of what the front end asks for. Access within your organisation is then controlled by roles and department scoping."
+      },
+      {
+        "q": "Can you import the spreadsheets we already have?",
+        "a": "That's the normal starting point. Every register has an Excel bulk-import template, and we'll map your existing columns onto it during onboarding. Exports use the same format, so data moves in both directions."
+      },
+      {
+        "q": "Who owns the data?",
+        "a": "You do. It's your operational record, and you can export it to Excel or PDF at any time without asking us. We don't sell it, mine it, or share it with anyone."
+      },
+      {
+        "q": "What payment methods do you accept?",
+        "a": "Bank transfer, mobile money (MTN, Telecel, AirtelTigo) and cards via Paystack. Institutional clients can be invoiced on their own terms — tell us what your finance department needs and we'll work to it."
+      },
+      {
+        "q": "Does it work when the network drops?",
+        "a": "The field-facing platforms are built for it. Fleet Manager in particular keeps working through a dropout and syncs when the connection returns, because remote sites and haulage routes rarely have coverage the whole way."
+      },
+      {
+        "q": "Will it carry our branding or yours?",
+        "a": "Yours. Every platform is white-labelled — your organisation's name and logo appear in the interface, on exports and on generated PDFs. We appear as a small maker's mark in the footer and nowhere else."
+      }
+    ]
+  },
+  "contact": {
+    "email": "admin@workflow-app.net",
+    "whatsapp": "+233 27 414 5249",
+    "location": "Kumasi, Ghana",
+    "response_time": "Within one business day"
+  }
+}

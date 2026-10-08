@@ -1,0 +1,15 @@
+# The site is built: scripts/build-site.mjs renders the published content
+# (from the admin) into the pages, then the admin app is built into /admin.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# The admin is a single-page app: every /admin/... path loads its index.html.
+# Real files (its scripts and styles) are served first, as always on Netlify.
+[[redirects]]
+  from = "/admin/*"
+  to = "/admin/index.html"
+  status = 200
