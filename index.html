@@ -1617,25 +1617,35 @@ document.querySelectorAll('.faq-q').forEach(function(q){
 });
 
 /* ── CONTACT FORM ───────────────────────────
-   Posts to Netlify Forms for real. Only reports success on an
-   actual 2xx response; a failure tells the visitor how else to reach us. */
+   Sends to the leads inbox in the website admin. If that service is down,
+   it falls back to Netlify Forms so no enquiry is lost; a message the
+   service turns down (incomplete, too many) is explained instead. Only
+   reports success on an actual 2xx; a failure says how else to reach us. */
+var LEADS_URL='https://ippsarwgvvlarlyqobvj.supabase.co/functions/v1/site-lead';
 var form=document.getElementById('contact-form');
 if(form){
   form.addEventListener('submit',function(e){
     e.preventDefault();
     var btn=document.getElementById('form-btn'),
         status=document.getElementById('form-status'),
-        original=btn.innerHTML;
+        original=btn.innerHTML,
+        body=new URLSearchParams(new FormData(form)).toString();
     btn.innerHTML='Sending…'; btn.disabled=true;
     status.className='form-status';
 
-    fetch('/', {
-      method:'POST',
-      headers:{'Content-Type':'application/x-www-form-urlencoded'},
-      body:new URLSearchParams(new FormData(form)).toString()
-    })
+    function viaNetlify(){
+      return fetch('/', {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:body})
+        .then(function(res){ if(!res.ok)throw new Error('HTTP '+res.status); });
+    }
+    fetch(LEADS_URL, {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:body})
     .then(function(res){
-      if(!res.ok)throw new Error('HTTP '+res.status);
+      if(res.ok)return;
+      if(res.status>=500)return viaNetlify();
+      return res.json().catch(function(){return {};}).then(function(b){
+        var err=new Error(b.error||'HTTP '+res.status); err.shown=!!b.error; throw err;
+      });
+    }, viaNetlify)
+    .then(function(){
       form.reset();
       btn.innerHTML='Message sent';
       btn.style.background='#22c55e';
@@ -1646,9 +1656,10 @@ if(form){
         btn.innerHTML=original; btn.style.background=''; btn.disabled=false;
       },5000);
     })
-    .catch(function(){
+    .catch(function(err){
       btn.innerHTML=original; btn.disabled=false;
       status.className='form-status err';
+      if(err&&err.shown){ status.textContent=err.message+'.'; return; }
       status.innerHTML='That didn\'t send. Please email <a href="mailto:admin@workflow-app.net" style="color:inherit;text-decoration:underline">admin@workflow-app.net</a> or message us on <a href="https://wa.me/233274145249" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline">WhatsApp</a>.';
     });
   });
