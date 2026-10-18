@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Eye, RotateCcw } from 'lucide-react'
-import { rpc, when } from '../lib/api'
+import { date, rpc, time } from '../lib/api'
 import { useDraft } from '../lib/content'
 import { PageTitle } from '../components/Layout'
 import { Notice } from '../components/fields'
@@ -27,7 +27,7 @@ export default function History() {
     try {
       await rpc('site_restore_publication', { p_id: id })
       await draft.reload()
-      setNotice({ tone: 'ok', text: `Version ${id} is now the draft. Check it in Website content, then publish it from the Overview.` })
+      setNotice({ tone: 'ok', text: `Version ${id} is now the draft. Check it in Website content, then publish it.` })
     } catch (e) {
       setNotice({ tone: 'error', text: e.message })
     }
@@ -37,30 +37,32 @@ export default function History() {
     <>
       <PageTitle title="Publish history" sub="Every version that has been published. Look at any of them, or load one back into the draft to undo later changes." />
       <div className="space-y-4">
-        {notice && <Notice tone={notice.tone}>{notice.text}</Notice>}
+        {notice && <div aria-live="polite"><Notice tone={notice.tone}>{notice.text}</Notice></div>}
         {error && <Notice tone="error">{error}</Notice>}
-        {list && list.length === 0 && <p className="text-sm text-slate-600">Nothing has been published from the admin yet.</p>}
+        {!list && !error && <p className="text-sm text-slate-600">Loading…</p>}
+        {list && list.length === 0 && <div className="card text-sm text-slate-600">Nothing has been published from the admin yet.</div>}
         {list && list.length > 0 && (
-          <ol className="card divide-y divide-slate-100 p-0">
+          <ol className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
             {list.map((p, i) => (
-              <li key={p.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
-                <div className="min-w-0">
-                  <p className="font-semibold">
-                    Version {p.id}{i === 0 && <span className="ml-2 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-800">Live</span>}
+              <li key={p.id} className="flex flex-wrap items-center gap-4 border-b border-slate-100 px-5 py-4 last:border-0">
+                <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl font-mono text-sm ${i === 0 ? 'bg-navy text-amber' : 'border border-slate-200 bg-slate-50 text-slate-700'}`}>v{p.id}</span>
+                <div className="min-w-0 flex-1 basis-60">
+                  <p className="flex flex-wrap items-center gap-2 font-semibold">
+                    Version {p.id}{i === 0 && <span className="badge badge-dot bg-emerald-50 text-emerald-700">Live</span>}
                   </p>
-                  <p className="text-sm text-slate-600">{when(p.published_at)} · {p.published_by || 'unknown'} · {STATUS[p.deploy_status]}</p>
-                  {p.note && <p className="mt-1 text-sm text-navy">“{p.note}”</p>}
+                  <p className="text-sm text-slate-600">{date(p.published_at)}, {time(p.published_at)} · {p.published_by || 'unknown'} · {STATUS[p.deploy_status]}</p>
+                  {p.note && <p className="mt-1 break-words text-sm text-navy">“{p.note}”</p>}
                 </div>
                 <div className="flex gap-2">
-                  <button type="button" className="btn-ghost" onClick={() => view(p.id)}><Eye size={15} /> View</button>
-                  <button type="button" className="btn-ghost" onClick={() => restore(p.id)}><RotateCcw size={15} /> Restore</button>
+                  <button type="button" className="btn-ghost" onClick={() => view(p.id)}><Eye size={15} aria-hidden="true" /> View</button>
+                  {i > 0 && <button type="button" className="btn-ghost" onClick={() => restore(p.id)}><RotateCcw size={15} aria-hidden="true" /> Restore</button>}
                 </div>
               </li>
             ))}
           </ol>
         )}
       </div>
-      {viewing && <Preview content={viewing.content} title={`Version ${viewing.id}, published ${when(viewing.published_at)}`} onClose={() => setViewing(null)} />}
+      {viewing && <Preview content={viewing.content} title={`Version ${viewing.id}, published ${date(viewing.published_at)}, ${time(viewing.published_at)}`} onClose={() => setViewing(null)} />}
     </>
   )
 }

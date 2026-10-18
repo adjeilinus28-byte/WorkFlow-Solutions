@@ -58,6 +58,20 @@ export const can = {
   people: role => role === 'admin',
 }
 
+// Dates follow the reader's own locale settings, in British English wording
+const LOCALE = 'en-GB'
+const fmt = opts => new Intl.DateTimeFormat(LOCALE, opts)
+const DAY = fmt({ day: 'numeric', month: 'short' })
+const DAY_YEAR = fmt({ day: 'numeric', month: 'short', year: 'numeric' })
+const LONG_DAY = fmt({ day: 'numeric', month: 'long', year: 'numeric' })
+const TIME = fmt({ hour: '2-digit', minute: '2-digit' })
+const sameDay = (a, b) => a.toDateString() === b.toDateString()
+const thisYear = d => d.getFullYear() === new Date().getFullYear()
+
+export const time = ts => (ts ? TIME.format(new Date(ts)) : '')
+export const date = ts => (ts ? (thisYear(new Date(ts)) ? DAY : DAY_YEAR).format(new Date(ts)) : '')
+
+// "just now", "5 min ago", "3 h ago", then "8 Oct, 18:16"
 export function when(ts) {
   if (!ts) return ''
   const d = new Date(ts)
@@ -66,6 +80,33 @@ export function when(ts) {
   if (mins < 60) return `${mins} min ago`
   const hours = Math.round(mins / 60)
   if (hours < 24) return `${hours} h ago`
-  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: d.getFullYear() === new Date().getFullYear() ? undefined : 'numeric' })
-    + ' ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+  return `${date(ts)}, ${time(ts)}`
 }
+
+// Headings for a list grouped by day: Today, Yesterday, 8 October 2026
+export function dayLabel(ts) {
+  const d = new Date(ts), now = new Date()
+  if (sameDay(d, now)) return 'Today'
+  const y = new Date(now); y.setDate(now.getDate() - 1)
+  if (sameDay(d, y)) return 'Yesterday'
+  return LONG_DAY.format(d)
+}
+
+// "Kwame Mensah" → "KM", "ama@workflow-app.net" → "AM"
+export function initials(name) {
+  const s = String(name || '').split('@')[0]
+  const parts = s.split(/[\s._-]+/).filter(Boolean)
+  return ((parts.length > 1 ? parts[0][0] + parts[1][0] : s.slice(0, 2)) || '?').toUpperCase()
+}
+
+// Status colours, shared by the inbox, the overview and the lead panel
+export const STATUS_TONES = {
+  new: 'bg-sky-50 text-sky-700',
+  contacted: 'bg-amber-50 text-amber-800',
+  demo_booked: 'bg-violet-50 text-violet-700',
+  trial: 'bg-indigo-50 text-indigo-700',
+  won: 'bg-emerald-50 text-emerald-700',
+  lost: 'bg-slate-100 text-slate-600',
+  spam: 'bg-red-50 text-red-700',
+}
+export const OPEN_STATUSES = ['new', 'contacted', 'demo_booked', 'trial']

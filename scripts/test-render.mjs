@@ -47,12 +47,17 @@ test('edits reach the page', () => {
   assert.match(out, /WFS ERP Cloud/)
   assert.match(out, /href="https:\/\/wfssalesmanager.com"[^>]*>wfssalesmanager.com</)
   assert.doesNotMatch(out, /wfs-fleetmanager/, 'hidden product must vanish from cards and footer')
-  assert.match(out, /<span class="status-soon">Coming soon<\/span>/)
+  assert.match(out, /<span class="badge badge-soon">Coming soon<\/span>/)
   assert.match(out, /<span class="prod-url">Launching 2027<\/span>/)
   assert.match(out, /id="faq-q-1"[^>]*><span>Will it carry our branding or yours\?/)
   assert.match(out, /data-yt="dQw4w9WgXcQ"/)
   assert.match(out, /overview video, 2 minutes 30 seconds"/)
-  assert.match(out, /<!--cms:announcement--><div class="announce" role="region" aria-label="Announcement"><p>New: TSF Monitor 2.0 <a href="#products">See what changed<\/a><\/p><\/div><!--\/cms:announcement-->/)
+  assert.match(out, /<!--cms:announcement--><div class="announce" role="region" aria-label="Announcement"><div class="announce-in"><span class="tag tag-new">New<\/span><p>New: TSF Monitor 2.0<\/p><a href="#products">See what changed <svg[^>]*>.*?<\/svg><\/a><\/div><\/div><!--\/cms:announcement-->/)
+  // Live platforms lead, and the first one gets the wide card with its preview
+  const grid = out.slice(out.indexOf('id="prod-grid"'), out.indexOf('<!--/cms:products-->'))
+  assert.ok(grid.indexOf('WFS Guard') > grid.indexOf('MediStaff'), 'coming-soon cards follow the live ones')
+  assert.match(grid, /<article class="prod-card wide rv">[\s\S]*?WFS ERP Cloud[\s\S]*?class="prod-preview"/)
+  assert.equal((grid.match(/prod-card wide/g) || []).length, 1)
 })
 
 test('contact details change everywhere, including structured data and the other pages', () => {

@@ -11,16 +11,25 @@ export { defaults }
 export const sectionProblems = (name, data) => validateContent(withDefaults({ [name]: data }, defaults))
 
 // The page exactly as the build would render it, for the preview frame.
-export function previewHtml(content) {
+// The side-by-side preview re-renders as you type, so it shows the page at
+// rest (no entrance motion) and reports its scroll position, letting the
+// next render open where you were reading.
+export function previewHtml(content, { still = false, scrollY = 0 } = {}) {
   let html
   try {
     html = renderHome(template, content, defaults)
   } catch (err) {
     return `<p style="font:16px system-ui;padding:32px;color:#B91C1C">This can't be previewed yet: ${String(err.message).replace(/</g, '&lt;')}</p>`
   }
+  const head = [`<base href="${window.location.origin}/">`]
+  if (still) head.push(`<script>var mm=window.matchMedia;window.matchMedia=function(q){return /reduced-motion/.test(q)?{matches:true,addEventListener:function(){},addListener:function(){}}:mm.call(window,q)}</script>`)
+  const tail = still
+    ? `<script>requestAnimationFrame(function(){scrollTo({top:${Math.max(0, Math.round(scrollY))},behavior:'instant'})});addEventListener('scroll',function(){parent.postMessage({wfsPreviewScroll:scrollY},'*')},{passive:true})</script>`
+    : ''
   return html
-    .replace('<head>', `<head>\n<base href="${window.location.origin}/">`)
+    .replace('<head>', `<head>\n${head.join('\n')}`)
     .replace('</head>', '<style>#cookie-banner{display:none!important}</style>\n</head>')
+    .replace('</body>', `${tail}</body>`)
 }
 
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b)
