@@ -28,10 +28,10 @@ export function Logo({ tag, size = 'md' }) {
         <circle cx="17" cy="36" r="5.5" fill="#F59E0B" /><circle cx="17" cy="36" r="2.1" fill="#FFFFFF" />
         <circle cx="43" cy="36" r="5.5" fill="#F59E0B" /><circle cx="43" cy="36" r="2.1" fill="#FFFFFF" />
       </svg>
-      <span translate="no" className={`whitespace-nowrap font-display font-extrabold tracking-tight text-white ${size === 'sm' ? 'text-[12px]' : 'text-[17px]'}`}>
+      <span translate="no" className={`whitespace-nowrap font-display font-bold tracking-[-0.02em] text-white ${size === 'sm' ? 'text-[12px]' : 'text-[17px]'}`}>
         WorkFlow <span className="text-amber">Solutions</span>
       </span>
-      {tag && <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-800">{tag}</span>}
+      {tag && <span className="bg-amber px-2 py-0.5 text-[13px] font-semibold text-navy">{tag}</span>}
     </span>
   )
 }
@@ -72,9 +72,9 @@ export default function Layout() {
     <nav aria-label="Admin sections" className="flex flex-col gap-1">
       {links.map(({ to, label, icon: Icon, end, badge }) => (
         <NavLink key={to} to={to} end={end} onClick={() => setOpen(false)}
-          className={({ isActive }) => `relative flex min-h-[42px] items-center gap-3 rounded-xl border px-3 text-[15px] font-medium transition-colors ${isActive
-            ? 'border-white/10 bg-white/[.06] text-white before:absolute before:-left-px before:top-2 before:bottom-2 before:w-[3px] before:rounded-full before:bg-amber'
-            : 'border-transparent text-slate-300 hover:bg-white/[.04] hover:text-white'}`}>
+          className={({ isActive }) => `relative flex min-h-[42px] items-center gap-3 px-3 text-[15px] font-medium transition-colors ${isActive
+            ? 'bg-white/[.08] text-white before:absolute before:-left-px before:top-2 before:bottom-2 before:w-[3px] before:rounded-full before:bg-amber'
+            : 'text-slate-300 hover:bg-white/[.04] hover:text-white'}`}>
           {({ isActive }) => (
             <>
               <Icon size={18} aria-hidden="true" className={isActive ? 'text-amber' : ''} />
@@ -84,31 +84,31 @@ export default function Layout() {
           )}
         </NavLink>
       ))}
-      <div className="my-3 border-t border-white/10" />
+      <div className="h-6" />
       <a href={SITE_URL} target="_blank" rel="noopener noreferrer"
-        className="flex min-h-[42px] items-center gap-3 rounded-xl px-3 text-[15px] font-medium text-slate-300 transition-colors hover:bg-white/[.04] hover:text-white">
+        className="flex min-h-[42px] items-center gap-3 px-3 text-[15px] font-medium text-slate-300 transition-colors hover:bg-white/[.04] hover:text-white">
         <ExternalLink size={18} aria-hidden="true" /> View the live site
       </a>
     </nav>
   )
   const account = (
-    <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[.04] p-3">
+    <div className="flex items-center gap-3 border bg-white/[.06] p-3">
       <span className="avatar">{initials(me?.email)}</span>
       <span className="min-w-0 flex-1">
         <span className="block truncate text-sm font-semibold text-white" title={me?.email}>{me?.email}</span>
         <span className="block text-xs capitalize text-slate-400">{me?.role}</span>
       </span>
       <button type="button" onClick={signOut} aria-label="Sign out" title="Sign out"
-        className="grid h-9 w-9 place-items-center rounded-lg text-slate-300 transition-colors hover:bg-white/10 hover:text-white">
+        className="grid h-9 w-9 place-items-center text-slate-300 transition-colors hover:bg-white/10 hover:text-white">
         <LogOut size={18} aria-hidden="true" />
       </button>
     </div>
   )
 
   return (
-    <div className="min-h-screen lg:flex">
+    <div className="min-h-dvh lg:flex">
       <a href="#main" className="skip-link">Skip to content</a>
-      <aside className="hidden w-[260px] shrink-0 flex-col justify-between bg-navy px-4 py-6 lg:sticky lg:top-0 lg:flex lg:h-screen">
+      <aside className="hidden w-[260px] shrink-0 flex-col justify-between bg-navy px-4 py-6 lg:sticky lg:top-0 lg:flex lg:h-dvh">
         <div className="space-y-9"><div className="px-1"><Logo size="sm" /></div>{nav}</div>
         {account}
       </aside>
@@ -149,7 +149,7 @@ export function PageTitle({ title, sub, children }) {
   return (
     <div className="mb-7 flex flex-wrap items-start justify-between gap-4">
       <div className="min-w-0">
-        <h1 className="text-balance font-display text-[28px] font-extrabold leading-tight tracking-tight text-navy sm:text-[34px]">{title}</h1>
+        <h1 className="text-balance font-display text-[28px] font-bold leading-tight tracking-[-0.02em] text-navy sm:text-[34px]">{title}</h1>
         {sub && <p className="mt-1.5 max-w-2xl text-pretty text-[15px] text-slate-600">{sub}</p>}
       </div>
       {children && <div className="flex flex-wrap items-center gap-2.5">{children}</div>}

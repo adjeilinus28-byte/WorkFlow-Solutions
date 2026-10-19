@@ -33,7 +33,7 @@ test('rendering is stable when run twice', () => {
 
 test('edits reach the page', () => {
   const c = clone(defaults)
-  c.hero.headline_line1 = 'Software that'; c.hero.headline_line2 = 'runs the site'; c.hero.highlight = 'runs'
+  c.hero.headline_line1 = 'Software that'; c.hero.headline_line2 = 'runs the site'
   c.products.items[0].name = 'WFS ERP Cloud'
   c.products.items[3].url = 'https://wfssalesmanager.com'
   c.products.items[2].show = false
@@ -43,21 +43,21 @@ test('edits reach the page', () => {
   c.announcement = { enabled: true, text: 'New: TSF Monitor 2.0', link_label: 'See what changed', link_url: '#products' }
   assert.deepEqual(validateContent(c), [])
   const out = renderHome(home, c, defaults)
-  assert.match(out, /<span class="word-inner amber">runs<\/span>/)
+  assert.match(out, /<h1 class="hero-title"><span class="line">Software that<\/span> <span class="line amber">runs the site<\/span><\/h1>/)
   assert.match(out, /WFS ERP Cloud/)
   assert.match(out, /href="https:\/\/wfssalesmanager.com"[^>]*>wfssalesmanager.com</)
   assert.doesNotMatch(out, /wfs-fleetmanager/, 'hidden product must vanish from cards and footer')
-  assert.match(out, /<span class="badge badge-soon">Coming soon<\/span>/)
-  assert.match(out, /<span class="prod-url">Launching 2027<\/span>/)
-  assert.match(out, /id="faq-q-1"[^>]*><span>Will it carry our branding or yours\?/)
+  assert.match(out, /<span class="dot"><\/span>Coming soon<\/span><\/p>\n\s*<h3>WFS Guard<\/h3>/)
+  assert.match(out, /<span class="plat-note">Launching 2027<\/span>/)
+  assert.match(out, /id="faq-q-1">Will it carry our branding or yours\?/)
   assert.match(out, /data-yt="dQw4w9WgXcQ"/)
   assert.match(out, /overview video, 2 minutes 30 seconds"/)
-  assert.match(out, /<!--cms:announcement--><div class="announce" role="region" aria-label="Announcement"><div class="announce-in"><span class="tag tag-new">New<\/span><p>New: TSF Monitor 2.0<\/p><a href="#products">See what changed <svg[^>]*>.*?<\/svg><\/a><\/div><\/div><!--\/cms:announcement-->/)
-  // Live platforms lead, and the first one gets the wide card with its preview
-  const grid = out.slice(out.indexOf('id="prod-grid"'), out.indexOf('<!--/cms:products-->'))
-  assert.ok(grid.indexOf('WFS Guard') > grid.indexOf('MediStaff'), 'coming-soon cards follow the live ones')
-  assert.match(grid, /<article class="prod-card wide rv">[\s\S]*?WFS ERP Cloud[\s\S]*?class="prod-preview"/)
-  assert.equal((grid.match(/prod-card wide/g) || []).length, 1)
+  assert.match(out, /<!--cms:announcement--><div class="announce" role="region" aria-label="Announcement"><p>New: TSF Monitor 2.0 <a href="#products">See what changed<\/a><\/p><\/div><!--\/cms:announcement-->/)
+  // Live platforms lead, coming-soon ones follow, a custom build comes last
+  const grid = out.slice(out.indexOf('class="plat-grid"'), out.indexOf('<!--/cms:products-->'))
+  assert.ok(grid.indexOf('WFS Guard') > grid.indexOf('MediStaff'), 'coming-soon tiles follow the live ones')
+  assert.ok(grid.indexOf('Something built for you') > grid.indexOf('WFS Guard'), 'the custom build comes last')
+  assert.match(grid, /<article class="plat rv">[\s\S]*?kumasi-kronum\.jpg[\s\S]*?<h3>WFS ERP Cloud<\/h3>/)
 })
 
 test('contact details change everywhere, including structured data and the other pages', () => {
@@ -94,10 +94,10 @@ test('unsafe links are rejected', () => {
 
 test('validation catches the usual mistakes', () => {
   const c = clone(defaults)
-  c.contact.email = 'not-an-email'; c.contact.whatsapp = '12'; c.hero.highlight = 'banana'
+  c.contact.email = 'not-an-email'; c.contact.whatsapp = '12'
   c.video.youtube_id = 'abc'; c.faq.items = []; c.products.items.forEach(i => { i.show = false })
   const e = validateContent(c).join('\n')
-  for (const s of ['Contact email', 'WhatsApp number', 'Highlighted word', 'YouTube', 'at least one FAQ', 'at least one product']) assert.match(e, new RegExp(s))
+  for (const s of ['Contact email', 'WhatsApp number', 'YouTube', 'at least one FAQ', 'at least one product']) assert.match(e, new RegExp(s))
 })
 
 test('YouTube links of every shape give the video ID', () => {

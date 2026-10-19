@@ -4,7 +4,7 @@ import { Calendar, Download, Globe, Inbox, Mail, Search, Send, Trash2, X } from 
 import { useAuth } from '../lib/auth'
 import { date, initials, rpc, STATUS_LABELS, time, when } from '../lib/api'
 import { leadsChanged, PageTitle } from '../components/Layout'
-import { Notice } from '../components/fields'
+import { Notice, Skeleton } from '../components/fields'
 import { useModal } from '../components/Dialog'
 import { StatusBadge } from './Overview'
 
@@ -66,7 +66,7 @@ export default function Leads() {
       </form>
 
       {error && <Notice tone="error">{error}</Notice>}
-      {!data && !error && <p className="text-sm text-slate-600">Loading…</p>}
+      {!data && !error && <div className="card"><Skeleton rows={5} /></div>}
       {data && data.leads.length === 0 && (
         <div className="card flex flex-col items-center gap-2 py-12 text-center">
           <Inbox size={28} className="text-slate-400" aria-hidden="true" />
@@ -75,15 +75,15 @@ export default function Leads() {
         </div>
       )}
       {data && data.leads.length > 0 && (
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-          <div aria-hidden="true" className="eyebrow hidden grid-cols-[minmax(0,2.2fr)_minmax(0,1.4fr)_minmax(0,1.2fr)_8.5rem_7rem] gap-4 border-b border-slate-200 bg-slate-50 px-5 py-3 md:grid">
+        <div className="overflow-hidden surface">
+          <div aria-hidden="true" className="col-head hidden grid-cols-[minmax(0,2.2fr)_minmax(0,1.4fr)_minmax(0,1.2fr)_8.5rem_7rem] gap-4 bg-slate-100 px-5 py-3 md:grid">
             <span>Person</span><span>Organisation</span><span>Interested in</span><span>Status</span><span className="text-right">Received</span>
           </div>
           <ul aria-label="Leads">
             {data.leads.map(l => {
               const name = `${l.first_name} ${l.last_name}`
               return (
-                <li key={l.id} className="row-cv border-b border-slate-100 last:border-0">
+                <li key={l.id} className="row-cv even:bg-slate-50">
                   <button type="button" onClick={() => set('open', l.id)} aria-current={l.id === openId || undefined}
                     className="relative grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1 px-5 py-3.5 text-left transition-colors hover:bg-slate-50 aria-[current=true]:bg-amber-50/60 aria-[current=true]:before:absolute aria-[current=true]:before:inset-y-0 aria-[current=true]:before:left-0 aria-[current=true]:before:w-[3px] aria-[current=true]:before:bg-amber md:grid-cols-[minmax(0,2.2fr)_minmax(0,1.4fr)_minmax(0,1.2fr)_8.5rem_7rem]">
                     <span className="flex min-w-0 items-center gap-3">
@@ -102,7 +102,7 @@ export default function Leads() {
               )
             })}
           </ul>
-          <p className="border-t border-slate-100 px-5 py-3 text-[13px] text-slate-600">
+          <p className="bg-slate-100 px-5 py-3 text-[13px] text-slate-600">
             Showing {data.leads.length} of {data.total ?? data.leads.length} · newest first
           </p>
         </div>
@@ -145,10 +145,10 @@ function LeadPanel({ lead, canDelete, onClose, onChanged }) {
       <div className="absolute inset-0 animate-fade-in bg-slate-900/40" onClick={close} aria-hidden="true" />
       <div ref={ref} role="dialog" aria-modal="true" aria-labelledby="lead-title"
         className="relative flex h-full w-full max-w-[480px] animate-slide-in flex-col bg-white shadow-lift">
-        <div className="flex items-start gap-4 border-b border-slate-200 px-6 py-5">
+        <div className="flex items-start gap-4 px-6 py-5">
           <span className="avatar h-12 w-12 text-sm">{initials(name)}</span>
           <div className="min-w-0 flex-1">
-            <h2 id="lead-title" className="break-words font-display text-[22px] font-extrabold leading-tight tracking-tight">{name}</h2>
+            <h2 id="lead-title" className="break-words font-display text-[22px] font-bold leading-tight tracking-[-0.02em]">{name}</h2>
             <p className="truncate text-sm text-slate-600">{lead.organisation || 'No organisation given'}</p>
           </div>
           <button type="button" className="btn-icon" onClick={close} aria-label="Close"><X size={18} aria-hidden="true" /></button>
@@ -177,7 +177,7 @@ function LeadPanel({ lead, canDelete, onClose, onChanged }) {
 
           <div>
             <p className="label">Message</p>
-            <div className="whitespace-pre-wrap break-words rounded-2xl bg-slate-50 p-4 text-[15px] leading-relaxed">{lead.message}</div>
+            <div className="whitespace-pre-wrap break-words bg-slate-50 p-4 text-[15px] leading-relaxed">{lead.message}</div>
           </div>
 
           <div>
@@ -194,7 +194,7 @@ function LeadPanel({ lead, canDelete, onClose, onChanged }) {
           <div aria-live="polite">{msg && <Notice tone={msg.tone}>{msg.text}</Notice>}</div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5 border-t border-slate-200 px-6 py-4">
+        <div className="flex flex-wrap items-center gap-2.5 bg-slate-100 px-6 py-4">
           <a className="btn-primary" href={`mailto:${lead.email}?subject=${subject}`}>Reply by email <Send size={15} aria-hidden="true" /></a>
           {lead.status !== 'spam' && <button type="button" className="btn-ghost" disabled={!!busy} onClick={() => update('spam', 'status')}>Mark as spam</button>}
           {canDelete && (

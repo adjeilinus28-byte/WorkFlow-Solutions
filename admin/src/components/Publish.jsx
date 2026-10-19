@@ -43,11 +43,11 @@ export function useChanges() {
 
 function ChangeList({ changes }) {
   return (
-    <ul className="divide-y divide-slate-100">
+    <ul className="[&>*:nth-child(even)]:bg-slate-50">
       {changes.map(c => (
         <li key={c.name}>
           <Link to={`/content/${SECTION_TAB[c.name]}`} className="group flex items-center gap-4 py-3.5">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-amber-200 bg-amber-50 text-amber-700"><Pencil size={15} aria-hidden="true" /></span>
+            <span className="grid h-9 w-9 shrink-0 place-items-center border border-amber-200 bg-amber-50 text-amber-700"><Pencil size={15} aria-hidden="true" /></span>
             <span className="min-w-0 flex-1">
               <span className="block font-semibold text-navy group-hover:text-amber-700">{c.label}</span>
               {c.updated_by && <span className="block truncate text-sm text-slate-600">Saved by {c.updated_by}</span>}
@@ -88,9 +88,9 @@ export function ChangesCard() {
           </div>
         )}
       </div>
-      {waiting && changes?.length > 0 && <div className="mt-4 border-t border-slate-100"><ChangeList changes={changes} /></div>}
+      {waiting && changes?.length > 0 && <div className="mt-4"><ChangeList changes={changes} /></div>}
       {!waiting && (
-        <p className="mt-4 flex items-center gap-2 rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+        <p className="mt-4 flex items-center gap-2 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
           <CheckCircle2 size={16} aria-hidden="true" /> Everything saved is live. Edit in <Link to="/content" className="font-semibold underline">Website content</Link>.
         </p>
       )}
@@ -160,7 +160,7 @@ export function PublishDialog({ onClose }) {
             ? <Notice tone="ok">The live site already matches the saved draft.</Notice>
             : changes?.length > 0 && (
               <div>
-                <p className="eyebrow mb-1">Going live</p>
+                <p className="col-head mb-1">Going live</p>
                 <ChangeList changes={changes} />
               </div>
             )}

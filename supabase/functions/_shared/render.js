@@ -22,20 +22,16 @@ export const ICONS = {
   box: '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/>',
 }
 
-export const PRODUCT_STATUSES = { live: 'Live', coming_soon: 'Coming soon', custom: 'Custom' }
-export const PLAN_STYLES = { amber: 'Amber', featured: 'Featured (Most popular)', purple: 'Purple', blue: 'Blue' }
-export const SECTIONS = ['announcement', 'hero', 'products', 'video', 'pricing', 'faq', 'contact']
+// What a product's tile shows, keyed like ICONS (the stored field is still "icon")
+export const TILE_PICTURES = Object.fromEntries(Object.keys(ICONS).map(k => [k, {
+  grid: 'Photo: Kumasi from Kronum', mountain: 'Photo: Damang gold mine pit', truck: 'Photo: haul truck at the Ahafo mine',
+  bag: 'Photo: Kejetia market hall', hospital: 'Photo: Komfo Anokye Teaching Hospital',
+}[k] || 'The platform’s name, set large']))
 
-const svg = (inner, w = 2) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`
-const ARROW = svg('<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>', 2.2)
-const EXTERNAL = svg('<path d="M7 7h10v10"/><path d="M7 17 17 7"/>', 2.2)
-const CHECK = svg('<path d="M20 6 9 17l-5-5"/>', 2.6)
-const CHEVRON = svg('<path d="m6 9 6 6 6-6"/>', 2.2)
-const ICON_SVG = inner => svg(inner, 1.8)
-const MAIL = '<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>'
-const CHAT = '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>'
-const PIN = '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>'
-const CLOCK = '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>'
+export const PRODUCT_STATUSES = { live: 'Live', coming_soon: 'Coming soon', custom: 'Custom' }
+// purple and blue are kept as keys so saved content still validates; both now draw in navy
+export const PLAN_STYLES = { amber: 'Amber', featured: 'Featured (Most popular)', purple: 'Navy', blue: 'Navy (alternate)' }
+export const SECTIONS = ['announcement', 'hero', 'products', 'video', 'pricing', 'faq', 'contact']
 
 // ── Escaping and validation ───────────────────────────────
 
@@ -94,10 +90,8 @@ export function validateContent(c) {
   }
 
   const h = c.hero || {}
-  maxLen(h.eyebrow, 'Hero small label', 60)
   need(h.headline_line1, 'Headline line 1', 40)
   maxLen(h.headline_line2, 'Headline line 2', 40)
-  if (h.highlight && !`${h.headline_line1} ${h.headline_line2}`.split(/\s+/).includes(h.highlight)) errors.push(`Highlighted word "${h.highlight}" isn't one of the headline's words`)
   need(h.sub, 'Hero paragraph', 400)
   need(h.primary_label, 'Main button text', 30); lnk(h.primary_link, 'Main button link')
   if (h.secondary_label) lnk(h.secondary_link, 'Second button link')
@@ -147,100 +141,65 @@ export function validateContent(c) {
 }
 
 // ── Regions ────────────────────────────────────────────────
+//
+// The dark WorkFlow design (Figma: "WorkFlow Solutions — Website Redesign").
+// Pictures are real places in Ghana, credited in the footer.
 
+// "Day free trial" → "day free trial", for a label that continues a sentence
+const lower = s => { const t = String(s || ''); return t.charAt(0).toLowerCase() + t.slice(1) }
+const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'
+
+// Two headline lines; the second one is set in amber
 function hero(h, ind) {
-  const out = []
-  if (h.eyebrow) out.push(`${ind}<p class="eyebrow"><span class="pulse" aria-hidden="true"></span>${esc(h.eyebrow)}</p>`)
-  // One flowing headline: the words wrap where the screen needs them to
-  out.push(`${ind}<h1 class="hero-title">`)
-  const words = [h.headline_line1, h.headline_line2].map(l => String(l || '').trim()).filter(Boolean).join(' ').split(/\s+/)
-  let marked = false
-  for (const w of words) {
-    const amber = !marked && h.highlight && w === h.highlight
-    if (amber) marked = true
-    out.push(`${ind}  <span class="word"><span class="word-inner${amber ? ' amber' : ''}">${esc(w)}</span></span>`)
-  }
-  out.push(`${ind}</h1>`)
+  const lines = [h.headline_line1, h.headline_line2].map(l => String(l || '').trim()).filter(Boolean)
+  const facts = (h.stats || []).map(s => `${esc(s.value)} ${esc(lower(s.label))}`).join(' · ')
+  const out = [`${ind}<p class="chip"><span class="dot"></span>Built in Kumasi${facts ? ` · ${facts}` : ''}</p>`]
+  out.push(`${ind}<h1 class="hero-title">${lines.map((l, i) => `<span class="line${i === lines.length - 1 && lines.length > 1 ? ' amber' : ''}">${esc(l)}</span>`).join(' ')}</h1>`)
   out.push(`${ind}<p class="hero-sub">${esc(h.sub)}</p>`)
-  out.push(`${ind}<div class="hero-actions">`)
-  out.push(`${ind}  <a href="${link(h.primary_link)}" class="btn btn-primary btn-lg">${esc(h.primary_label)} ${ARROW}</a>`)
-  if (h.secondary_label) out.push(`${ind}  <a href="${link(h.secondary_link)}" class="btn btn-inverse btn-lg">${esc(h.secondary_label)}</a>`)
-  out.push(`${ind}</div>`)
-  if ((h.stats || []).length) {
-    out.push(`${ind}<dl class="hero-stats">`)
-    for (const s of h.stats) {
-      const count = /^\d+$/.test(String(s.value)) ? ` data-count="${esc(s.value)}"` : ''
-      out.push(`${ind}  <div class="stat"><dt>${esc(s.label)}</dt><dd${count}>${esc(s.value)}</dd></div>`)
-    }
-    out.push(`${ind}</dl>`)
-  }
+  const second = h.secondary_label ? `<a href="${link(h.secondary_link)}" class="btn btn-ghost">${esc(h.secondary_label)} ${ARROW}</a>` : ''
+  out.push(`${ind}<p class="hero-actions"><a href="${link(h.primary_link)}" class="btn btn-primary">${esc(h.primary_label)} ${ARROW}</a>${second}</p>`)
   return out
 }
 
-const BADGE = {
-  live: '<span class="badge badge-live">Live</span>',
-  coming_soon: '<span class="badge badge-soon">Coming soon</span>',
-  custom: '<span class="badge badge-custom">Custom</span>',
+// Every platform card carries a real photograph of its world in Ghana
+const PHOTOS = {
+  grid: { src: '/assets/kumasi-kronum.jpg', alt: 'Kumasi seen from the hills at Kronum, low roofs under a wide blue sky' },
+  mountain: { src: '/assets/damang-pit.jpg', alt: 'The terraced walls of the Damang gold mine pit in Ghana' },
+  truck: { src: '/assets/ahafo-pit.jpg', alt: 'A loaded haul truck crossing a dusty pit floor at the Ahafo gold mine, Ghana' },
+  bag: { src: '/assets/kejetia-market.jpg', alt: 'The long market hall of Kejetia market in Kumasi, under its striped roof' },
+  hospital: { src: '/assets/kath-hospital.jpg', alt: 'Komfo Anokye Teaching Hospital in Kumasi, seen across its lawn' },
 }
+const STATUS_CHIP = { live: 'Live', coming_soon: 'Coming soon' }
+const urlLink = u => `<a href="${link(u)}" target="_blank" rel="noopener noreferrer" class="plat-url">${esc(displayUrl(u))}</a>`
 
-const SPARK_LINE = 'M0 64 L30 58 L60 62 L90 46 L120 50 L150 34 L180 40 L210 24 L240 30 L270 14 L300 18'
-const SPARK = `<svg class="pv-spark" viewBox="0 0 300 84" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="pv-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F59E0B" stop-opacity=".35"/><stop offset="1" stop-color="#F59E0B" stop-opacity="0"/></linearGradient></defs><path d="${SPARK_LINE} L300 84 L0 84 Z" fill="url(#pv-fill)"/><path d="${SPARK_LINE}" fill="none" stroke="#F59E0B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`
-
-// The wide card's window into the product. Decorative: the figures are
-// examples, so it's hidden from screen readers.
-function preview(icon, ind) {
-  const i = `${ind}  `
-  const kpi = (label, value, note, tone) => `${i}  <div class="pv-kpi"><span class="pv-label">${label}</span><span class="pv-value">${value}</span><span class="pv-note ${tone}">${note}</span></div>`
-  const row = (a, b) => `${i}<div class="pv-row"><span>${a}</span><span>${b}</span></div>`
-  const out = [`${ind}<div class="prod-preview" aria-hidden="true">`, `${i}<div class="pv-dots"><span></span><span></span><span></span></div>`]
-  if (icon === 'truck') {
-    out.push(`${i}<div class="pv-kpis">`, kpi('On route', '18 of 22', 'vehicles', 'good'), kpi('Service due', '2', 'this week', 'warn'), `${i}</div>`,
-      `${i}<div class="pv-track"><span></span></div>`, row('GT-4471 · Tema → Kumasi', 'On route'), row('GR-2290 · Fuel logged', '62 L'))
-  } else if (icon === 'bag') {
-    out.push(`${i}<div class="pv-kpis">`, kpi('Today’s sales', 'GH₵ 18,420', '+12%', 'good'), kpi('Stock alerts', '3', 'items low', 'warn'), `${i}</div>`,
-      `${i}${SPARK}`, row('INV-2041 · Kofi Stores', 'GH₵ 1,240'), row('INV-2040 · Ama Pharmacy', 'GH₵ 860'))
-  } else {
-    out.push(`${i}<div class="pv-kpis">`, kpi('Approvals', '4', 'waiting', 'warn'), kpi('Records', '12,480', 'this month', 'good'), `${i}</div>`,
-      `${i}${SPARK}`, row('Leave request · Ama O.', 'Approved'), row('Purchase order · Diesel', 'Pending'))
-  }
-  out.push(`${ind}</div>`)
-  return out
-}
-
-const tags = (list, cls = 'tags') => `<ul class="${cls}">${list.map(m => `<li>${esc(m)}</li>`).join('')}</ul>`
-const urlLink = u => `<a class="prod-url" href="${link(u)}" target="_blank" rel="noopener noreferrer">${esc(displayUrl(u))}${EXTERNAL}</a>`
-
-function productCard(it, ind, wide) {
-  const foot = it.url ? urlLink(it.url) : it.link_note ? `<span class="prod-url">${esc(it.link_note)}</span>` : ''
+function platformCard(it, ind) {
+  const photo = PHOTOS[it.icon]
+  const pic = photo
+    ? `<img src="${photo.src}" alt="${esc(photo.alt)}" width="1400" height="1050" loading="lazy"/>`
+    : `<span class="plat-word" aria-hidden="true">${esc(it.short_name || it.name)}</span>`
+  const note = it.url ? urlLink(it.url) : it.link_note ? `<span class="plat-note">${esc(it.link_note)}</span>` : ''
   const out = [
-    `${ind}<article class="prod-card${wide ? ' wide' : ''} rv">`,
-    `${ind}  <div class="prod-body">`,
-    `${ind}    <div class="prod-top"><span class="icon-tile">${ICON_SVG(ICONS[it.icon] || ICONS.box)}</span>${BADGE[it.status] || ''}</div>`,
-    `${ind}    <div class="prod-title"><p class="prod-sector">${esc(it.sector)}</p><h3 class="prod-name">${esc(it.name)}</h3></div>`,
-    `${ind}    <p class="prod-desc">${esc(it.description)}</p>`,
+    `${ind}<article class="plat rv">`,
+    `${ind}  <div class="plat-pic">${pic}</div>`,
+    `${ind}  <div class="plat-body">`,
+    `${ind}    <p class="plat-top"><span class="caps">${esc(it.sector)}</span><span class="chip chip-sm"><span class="dot${it.status === 'live' ? ' live' : ''}"></span>${STATUS_CHIP[it.status] || 'Live'}</span></p>`,
+    `${ind}    <h3>${esc(it.name)}</h3>`,
+    `${ind}    <p class="plat-desc">${esc(it.description)}</p>`,
   ]
-  if ((it.modules || []).length) out.push(`${ind}    ${tags(it.modules)}`)
-  out.push(`${ind}    <div class="prod-foot"><a href="${link(it.cta_link)}" class="link">${esc(it.cta_label)} ${ARROW}</a>${foot}</div>`, `${ind}  </div>`)
-  if (wide) out.push(...preview(it.icon, `${ind}  `))
-  out.push(`${ind}</article>`)
+  if ((it.modules || []).length) out.push(`${ind}    <p class="plat-mods">${it.modules.map(esc).join(' · ')}</p>`)
+  out.push(`${ind}    <p class="plat-links"><a href="${link(it.cta_link)}" class="text-link">${esc(it.cta_label)}</a>${note}</p>`, `${ind}  </div>`, `${ind}</article>`)
   return out
 }
 
-function customStrip(it, ind) {
-  const out = [
-    `${ind}<article class="custom-strip rv">`,
-    `${ind}  <span class="icon-tile icon-tile-dark">${ICON_SVG(ICONS[it.icon] || ICONS.star)}</span>`,
-    `${ind}  <div class="cs-copy">`,
-    `${ind}    <p class="prod-sector">${esc(it.sector)}</p>`,
-    `${ind}    <h3 class="cs-name">${esc(it.name)}</h3>`,
-    `${ind}    <p class="cs-desc">${esc(it.description)}</p>`,
+function customCard(it, ind) {
+  return [
+    `${ind}<article class="plat-custom rv">`,
+    `${ind}  <p class="caps">${esc(it.sector)}</p>`,
+    `${ind}  <h3>${esc(it.name)}</h3>`,
+    `${ind}  <p>${esc(it.description)}</p>`,
+    `${ind}  <a href="${link(it.cta_link)}" class="btn btn-dark">${esc(it.cta_label)} ${ARROW}</a>`,
+    `${ind}</article>`,
   ]
-  if ((it.modules || []).length) out.push(`${ind}    ${tags(it.modules, 'tags tags-dark')}`)
-  const note = it.link_note ? `<p class="cs-note">${esc(it.link_note)}</p>` : ''
-  out.push(`${ind}  </div>`,
-    `${ind}  <div class="cs-action">${BADGE.custom}${note}${it.url ? urlLink(it.url) : ''}<a href="${link(it.cta_link)}" class="btn btn-primary btn-lg">${esc(it.cta_label)} ${ARROW}</a></div>`,
-    `${ind}</article>`)
-  return out
 }
 
 // Items separated by blank lines inside their container, for readable source
@@ -251,24 +210,19 @@ function spaced(open, blocks, close) {
   return out
 }
 
-// Live products lead (the first one, wide, with a window into the product),
-// then the ones coming soon. A custom build gets its own strip below.
+// Live platforms first, then the ones coming soon, then a custom build
 function products(p, ind) {
   const shown = (p.items || []).filter(it => it.show !== false)
-  const cards = [...shown.filter(it => it.status === 'live'), ...shown.filter(it => it.status === 'coming_soon')]
-  const wide = cards.length > 1 && cards[0].status === 'live'
-  const out = [
-    `${ind}<div class="section-head">`,
-    `${ind}  <div class="section-heading">`,
-    `${ind}    <p class="eyebrow-label rv">Platforms</p>`,
-    `${ind}    <h2 class="section-title rv">${esc(p.title)}</h2>`,
-    `${ind}  </div>`,
-    `${ind}  <div class="section-aside rv">${p.note ? `<p>${esc(p.note)}</p>` : ''}<a href="#platform" class="link">See what’s under the hood ${ARROW}</a></div>`,
-    `${ind}</div>`,
-    ...spaced(`${ind}<div class="prod-grid" id="prod-grid" data-carousel data-stagger>`, cards.map((it, i) => productCard(it, `${ind}  `, wide && i === 0)), `${ind}</div>`),
+  const cards = [...shown.filter(it => it.status === 'live'), ...shown.filter(it => it.status === 'coming_soon')].map(it => platformCard(it, `${ind}  `))
+  const custom = shown.filter(it => it.status === 'custom').map(it => customCard(it, `${ind}  `))
+  const head = [
+    `${ind}<div class="sec-head rv">`,
+    `${ind}  <p class="chip"><span class="dot"></span>The platforms</p>`,
+    `${ind}  <h2 id="products-title">${esc(p.title)}</h2>`,
   ]
-  for (const it of shown.filter(it => it.status === 'custom')) out.push(...customStrip(it, ind))
-  return out
+  if (p.note) head.push(`${ind}  <p class="lead">${esc(p.note)}</p>`)
+  head.push(`${ind}</div>`)
+  return [...head, ...spaced(`${ind}<div class="plat-grid" data-stagger>`, [...cards, ...custom], `${ind}</div>`)]
 }
 
 function footerProducts(p, ind) {
@@ -278,84 +232,78 @@ function footerProducts(p, ind) {
 
 function video(v, ind) {
   const words = durationWords(v.duration)
-  const out = [
+  return [
     `${ind}<button class="video-facade" id="video-facade"`,
     `${ind}        data-yt="${esc(v.youtube_id || 'REPLACE_WITH_YOUTUBE_ID')}"`,
     `${ind}        style="background-image:url('/video-poster.jpg')"`,
     `${ind}        aria-label="Play the WorkFlow Solutions overview video${words ? `, ${words}` : ''}">`,
-    `${ind}  <span class="play-btn">`,
-    `${ind}    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>`,
-    `${ind}  </span>`,
-    `${ind}  <span class="video-meta">`,
+    `${ind}  <span class="play-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>`,
+    `${ind}  <span class="video-meta">${v.duration ? `${esc(v.duration)}, sound on` : 'Sound on'}</span>`,
+    `${ind}</button>`,
   ]
-  if (v.duration) out.push(`${ind}    <span class="vm-chip">${esc(v.duration)}</span>`)
-  out.push(`${ind}    <span class="vm-chip">Sound on</span>`, `${ind}  </span>`, `${ind}</button>`)
-  return out
 }
 
-const PLAN_CLASS = { amber: '', featured: ' featured', purple: ' tone-purple', blue: ' tone-blue' }
+// "a · b · c" → ["a", "b", "c"]
+const dotList = s => String(s || '').split('·').map(x => x.trim()).filter(Boolean)
 
+// Plans side by side; the featured plan is the amber card
 function pricing(pr, ind) {
   const out = [
-    `${ind}<div class="section-head">`,
-    `${ind}  <div class="section-heading">`,
-    `${ind}    <p class="eyebrow-label rv">Pricing</p>`,
-    `${ind}    <h2 class="section-title rv">${esc(pr.title)}</h2>`,
-    `${ind}    <p class="section-sub rv">${esc(pr.intro)}</p>`,
-    `${ind}  </div>`,
+    `${ind}<div class="sec-head sec-head-center rv">`,
+    `${ind}  <p class="chip"><span class="dot"></span>Pricing</p>`,
+    `${ind}  <h2 id="pricing-title">${esc(pr.title)}</h2>`,
+    `${ind}  <p class="lead">${esc(pr.intro)}</p>`,
     `${ind}</div>`,
-    `${ind}<div class="price-grid" data-stagger>`,
+    `${ind}<div class="plans" data-stagger>`,
   ]
   for (const pl of pr.plans || []) {
+    const featured = pl.style === 'featured'
     const quote = String(pl.quote || '').split('\n').map(l => esc(l.trim())).filter(Boolean).join(' ')
-    out.push(`${ind}  <article class="price-card${PLAN_CLASS[pl.style] ?? ''} rv">`, `${ind}    <div class="plan-head">`,
-      `${ind}      <p class="plan-name">${esc(pl.name)}</p>`, `${ind}      <h3 class="plan-quote">${quote}</h3>`)
-    if (pl.period) out.push(`${ind}      <p class="plan-period">${esc(pl.period)}</p>`)
-    out.push(`${ind}    </div>`, `${ind}    <p class="plan-desc">${esc(pl.description)}</p>`)
+    out.push(`${ind}  <article class="plan${featured ? ' plan-featured' : ''} rv">`,
+      `${ind}    <p class="caps">${esc(pl.name)}</p>`,
+      `${ind}    <h3>${quote}</h3>`)
+    if (pl.period) out.push(`${ind}    <p class="plan-period">${featured ? 'Most popular · ' : ''}${esc(pl.period)}</p>`)
+    out.push(`${ind}    <p class="plan-desc">${esc(pl.description)}</p>`)
     if ((pl.features || []).length) {
-      out.push(`${ind}    <ul class="plan-features">`)
-      for (const f of pl.features) out.push(`${ind}      <li><span class="check">${CHECK}</span>${esc(f)}</li>`)
+      out.push(`${ind}    <ul class="ticks">`)
+      for (const f of pl.features) out.push(`${ind}      <li>${esc(f)}</li>`)
       out.push(`${ind}    </ul>`)
     }
-    out.push(`${ind}    <a href="${link(pl.cta_link)}" class="btn ${pl.style === 'featured' ? 'btn-primary' : 'btn-secondary'} btn-block">${esc(pl.cta_label)} ${ARROW}</a>`, `${ind}  </article>`)
+    out.push(`${ind}    <a href="${link(pl.cta_link)}" class="btn ${featured ? 'btn-dark' : 'btn-primary'} btn-block">${esc(pl.cta_label)} ${ARROW}</a>`, `${ind}  </article>`)
   }
   out.push(`${ind}</div>`)
-  const methods = String(pr.payment_methods || '').split('·').map(s => s.trim()).filter(Boolean)
-  if (methods.length) out.push(`${ind}<div class="pay-row rv"><span class="pay-label">We accept</span>${tags(methods)}</div>`)
+  const methods = dotList(pr.payment_methods)
+  if (methods.length) out.push(`${ind}<p class="pay rv"><span>We accept</span>${methods.map(m => `<span class="chip chip-sm">${esc(m)}</span>`).join('')}</p>`)
   return out
 }
 
-// Every answer is in the page and open, so it reads fine without JavaScript;
-// the script folds all but the first when it starts.
+// Questions as an open list; every answer visible
 function faq(f, ind) {
-  const items = (f.items || []).map((it, i) => {
-    const n = i + 1
-    return [
-      `${ind}  <div class="faq-item rv">`,
-      `${ind}    <h3 class="faq-h"><button type="button" class="faq-q" id="faq-q-${n}" aria-expanded="true" aria-controls="faq-a-${n}"><span>${esc(it.q)}</span><span class="faq-icon">${CHEVRON}</span></button></h3>`,
-      `${ind}    <div class="faq-a" id="faq-a-${n}" role="region" aria-labelledby="faq-q-${n}"><p>${esc(it.a)}</p></div>`,
-      `${ind}  </div>`,
-    ]
-  })
-  return spaced(`${ind}<div class="faq-list" data-stagger>`, items, `${ind}</div>`)
+  const items = (f.items || []).map((it, i) => [
+    `${ind}  <div class="qa rv">`,
+    `${ind}    <h3 id="faq-q-${i + 1}">${esc(it.q)}</h3>`,
+    `${ind}    <p>${esc(it.a)}</p>`,
+    `${ind}  </div>`,
+  ])
+  return spaced(`${ind}<div class="qa-list">`, items, `${ind}</div>`)
 }
 
 function contact(c, ind) {
-  const item = (tag, attrs, icon, label, val, go) =>
-    `${ind}  <li class="rv"><${tag} class="contact-item"${attrs}><span class="icon-tile">${ICON_SVG(icon)}</span><span class="ci-text"><span class="ci-label">${label}</span><span class="ci-val">${val}</span></span>${go ? `<span class="ci-go">${EXTERNAL}</span>` : ''}</${tag}></li>`
-  const out = [`${ind}<ul class="contact-list" data-stagger>`]
-  out.push(item('a', ` href="mailto:${esc(c.email)}"`, MAIL, 'Email', esc(c.email), true))
-  out.push(item('a', ` href="https://wa.me/${phoneDigits(c.whatsapp)}" target="_blank" rel="noopener noreferrer"`, CHAT, 'WhatsApp', esc(c.whatsapp), true))
-  if (c.location) out.push(item('div', '', PIN, 'Based in', esc(c.location), false))
-  if (c.response_time) out.push(item('div', '', CLOCK, 'Response time', esc(c.response_time), false))
+  const out = [
+    `${ind}<ul class="reach">`,
+    `${ind}  <li><span class="caps">Email</span><a href="mailto:${esc(c.email)}">${esc(c.email)}</a></li>`,
+    `${ind}  <li><span class="caps">WhatsApp</span><a href="https://wa.me/${phoneDigits(c.whatsapp)}" target="_blank" rel="noopener noreferrer">${esc(c.whatsapp)}</a></li>`,
+  ]
+  if (c.location) out.push(`${ind}  <li><span class="caps">Based in</span><span>${esc(c.location)}</span></li>`)
+  if (c.response_time) out.push(`${ind}  <li><span class="caps">Replies</span><span>${esc(c.response_time)}</span></li>`)
   out.push(`${ind}</ul>`)
   return out
 }
 
 function announcement(a) {
   if (!a || !a.enabled || !a.text) return ''
-  const more = a.link_url && a.link_label ? `<a href="${link(a.link_url)}">${esc(a.link_label)} ${ARROW}</a>` : ''
-  return `<div class="announce" role="region" aria-label="Announcement"><div class="announce-in"><span class="tag tag-new">New</span><p>${esc(a.text)}</p>${more}</div></div>`
+  const more = a.link_url && a.link_label ? ` <a href="${link(a.link_url)}">${esc(a.link_label)}</a>` : ''
+  return `<div class="announce" role="region" aria-label="Announcement"><p>${esc(a.text)}${more}</p></div>`
 }
 
 const BLOCK_REGIONS = {

@@ -1,0 +1,5 @@
+# Keep LF everywhere: the renderer test compares index.html byte for byte.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.ico binary

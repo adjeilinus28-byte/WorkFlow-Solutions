@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { CloudUpload, Inbox, Pencil, RotateCcw, Trash2, Users } from 'lucide-react'
 import { dayLabel, rpc, STATUS_LABELS, time } from '../lib/api'
 import { PageTitle } from '../components/Layout'
-import { Notice } from '../components/fields'
+import { Notice, Skeleton } from '../components/fields'
 
 const SECTION = { announcement: 'announcement bar', hero: 'headline', products: 'products', video: 'video', pricing: 'pricing', faq: 'FAQ', contact: 'contact details' }
 
@@ -80,13 +80,13 @@ export default function Activity() {
         ))}
       </div>
       {error && <Notice tone="error">{error}</Notice>}
-      {!rows && !error && <p className="text-sm text-slate-600">Loading…</p>}
+      {!rows && !error && <div className="card"><Skeleton rows={5} /></div>}
       {rows && (
         <section className="card" aria-label="Activity">
           {shown.length === 0 && <p className="text-sm text-slate-600">{kind ? 'Nothing of this kind yet.' : 'Nothing yet.'}</p>}
           {groups.map(g => (
             <div key={g.label} className="mb-3 last:mb-0">
-              <h2 className="eyebrow mb-1 mt-2">{g.label}</h2>
+              <h2 className="col-head mb-1 mt-2">{g.label}</h2>
               <ol>{g.rows.map(r => <ActivityItem key={r.id} row={r} />)}</ol>
             </div>
           ))}

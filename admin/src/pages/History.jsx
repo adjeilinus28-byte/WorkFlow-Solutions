@@ -3,7 +3,7 @@ import { Eye, RotateCcw } from 'lucide-react'
 import { date, rpc, time } from '../lib/api'
 import { useDraft } from '../lib/content'
 import { PageTitle } from '../components/Layout'
-import { Notice } from '../components/fields'
+import { Notice, Skeleton } from '../components/fields'
 import Preview from '../components/Preview'
 
 const STATUS = { triggered: 'Sent to Netlify', pending: 'Saved', no_hook: 'Waiting for build hook', failed: 'Netlify unreachable' }
@@ -39,13 +39,13 @@ export default function History() {
       <div className="space-y-4">
         {notice && <div aria-live="polite"><Notice tone={notice.tone}>{notice.text}</Notice></div>}
         {error && <Notice tone="error">{error}</Notice>}
-        {!list && !error && <p className="text-sm text-slate-600">Loading…</p>}
+        {!list && !error && <div className="card"><Skeleton rows={4} /></div>}
         {list && list.length === 0 && <div className="card text-sm text-slate-600">Nothing has been published from the admin yet.</div>}
         {list && list.length > 0 && (
-          <ol className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+          <ol className="overflow-hidden surface">
             {list.map((p, i) => (
-              <li key={p.id} className="flex flex-wrap items-center gap-4 border-b border-slate-100 px-5 py-4 last:border-0">
-                <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl font-mono text-sm ${i === 0 ? 'bg-navy text-amber' : 'border border-slate-200 bg-slate-50 text-slate-700'}`}>v{p.id}</span>
+              <li key={p.id} className="flex flex-wrap items-center gap-4 px-5 py-4 even:bg-slate-50">
+                <span className={`grid h-11 w-11 shrink-0 place-items-center text-sm tabular-nums ${i === 0 ? 'bg-navy text-amber' : 'border border-slate-200 bg-slate-50 text-slate-700'}`}>v{p.id}</span>
                 <div className="min-w-0 flex-1 basis-60">
                   <p className="flex flex-wrap items-center gap-2 font-semibold">
                     Version {p.id}{i === 0 && <span className="badge badge-dot bg-emerald-50 text-emerald-700">Live</span>}

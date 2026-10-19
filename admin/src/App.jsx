@@ -13,7 +13,7 @@ import Activity from './pages/Activity'
 
 function Gate() {
   const { session, me, error, loading, needsPassword } = useAuth()
-  if (loading) return <p className="p-8 text-sm text-slate-500">Loading…</p>
+  if (loading) return <div role="status" className="grid min-h-dvh place-items-center"><span className="sr-only">Loading…</span><span aria-hidden="true" className="skel h-1.5 w-40 rounded-full" /></div>
   if (!session) return <SignIn />
   if (needsPassword) return <SetPassword />
   if (error || !me?.role) return <NoAccess />

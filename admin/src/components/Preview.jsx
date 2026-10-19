@@ -4,13 +4,13 @@ import { previewHtml } from '../lib/content'
 import { useModal } from './Dialog'
 
 function SizeSwitch({ phone, setPhone, dark }) {
-  const on = dark ? 'bg-white text-navy' : 'bg-white text-navy shadow-sm'
+  const on = dark ? 'bg-white text-navy' : 'bg-white text-navy'
   const off = dark ? 'text-slate-200 hover:text-white' : 'text-slate-600 hover:text-navy'
   return (
-    <div className={`flex rounded-xl p-1 ${dark ? 'bg-white/10' : 'bg-slate-100'}`} role="group" aria-label="Screen size">
+    <div className={`flex p-1 ${dark ? 'bg-white/10' : 'bg-slate-100'}`} role="group" aria-label="Screen size">
       {[[false, Monitor, 'Desktop'], [true, Smartphone, 'Phone']].map(([value, Icon, label]) => (
         <button key={label} type="button" onClick={() => setPhone(value)} aria-pressed={phone === value}
-          className={`flex min-h-[34px] items-center gap-1.5 rounded-lg px-3 text-sm font-semibold transition-colors ${phone === value ? on : off}`}>
+          className={`flex min-h-[34px] items-center gap-1.5 px-3 text-sm font-semibold transition-colors ${phone === value ? on : off}`}>
           <Icon size={15} aria-hidden="true" /> {label}
         </button>
       ))}
@@ -32,12 +32,12 @@ export default function Preview({ content, title = 'Preview', onClose }) {
         <p className="truncate text-sm font-semibold">{title}</p>
         <div className="flex items-center gap-2">
           <SizeSwitch phone={phone} setPhone={setPhone} dark />
-          <button type="button" onClick={onClose} className="grid h-9 w-9 place-items-center rounded-lg hover:bg-white/10" aria-label="Close preview"><X size={20} aria-hidden="true" /></button>
+          <button type="button" onClick={onClose} className="grid h-9 w-9 place-items-center hover:bg-white/10" aria-label="Close preview"><X size={20} aria-hidden="true" /></button>
         </div>
       </div>
       <div className="flex flex-1 justify-center overflow-hidden p-3 sm:p-6">
         <iframe title="Website preview" sandbox="allow-scripts" srcDoc={html}
-          className={`h-full rounded-xl bg-white shadow-2xl ${phone ? 'w-[390px]' : 'w-full'}`} />
+          className={`h-full bg-white ${phone ? 'w-[390px]' : 'w-full'}`} />
       </div>
     </div>
   )
@@ -81,8 +81,8 @@ export function LivePreview({ content, onExpand }) {
           <button type="button" className="btn-icon h-[42px] w-[42px]" onClick={onExpand} aria-label="Open the preview full size" title="Full size"><Maximize2 size={16} aria-hidden="true" /></button>
         </div>
       </div>
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-slate-100">
-        <div className="flex items-center gap-3 border-b border-slate-200 bg-white px-3 py-2" aria-hidden="true">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden border border-slate-200 bg-slate-100">
+        <div className="flex items-center gap-3 bg-slate-100 px-3 py-2" aria-hidden="true">
           <span className="flex gap-1.5"><i className="h-2.5 w-2.5 rounded-full bg-red-400" /><i className="h-2.5 w-2.5 rounded-full bg-amber" /><i className="h-2.5 w-2.5 rounded-full bg-emerald-400" /></span>
           <span className="flex-1 truncate rounded-full bg-slate-100 px-3 py-1 text-center text-xs text-slate-600">workflow-app.net</span>
           <ExternalLink size={14} className="text-slate-400" />
