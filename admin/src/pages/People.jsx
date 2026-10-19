@@ -3,7 +3,7 @@ import { Check, Copy, Lock, Trash2, UserPlus } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { callFunction, date, initials, ROLE_LABELS, rpc, when } from '../lib/api'
 import { PageTitle } from '../components/Layout'
-import { Notice } from '../components/fields'
+import { Notice, Skeleton } from '../components/fields'
 import Dialog from '../components/Dialog'
 
 const ROLE_NAMES = { admin: 'Admin', editor: 'Editor', sales: 'Sales' }
@@ -40,15 +40,15 @@ export default function People() {
       </PageTitle>
       {notice && <div className="mb-5" aria-live="polite"><Notice tone={notice.tone}>{notice.text}</Notice></div>}
       <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-          <div aria-hidden="true" className="eyebrow flex justify-between border-b border-slate-200 bg-slate-50 px-5 py-3"><span>Person</span><span>Role · Added</span></div>
-          {!people && <p className="px-5 py-4 text-sm text-slate-600">Loading…</p>}
+        <div className="overflow-hidden surface">
+          <div aria-hidden="true" className="col-head flex justify-between bg-slate-100 px-5 py-3"><span>Person</span><span>Role · Added</span></div>
+          {!people && <Skeleton rows={3} className="px-5 py-5" />}
           {people && (
             <ul aria-label="People with access">
               {people.map(p => {
                 const self = p.user_id === me?.user_id
                 return (
-                  <li key={p.user_id} className="flex flex-wrap items-center gap-x-4 gap-y-3 border-b border-slate-100 px-5 py-4 last:border-0">
+                  <li key={p.user_id} className="flex flex-wrap items-center gap-x-4 gap-y-3 px-5 py-4 even:bg-slate-50">
                     <span className="flex min-w-0 flex-1 basis-56 items-center gap-3">
                       <span className="avatar">{initials(p.email)}</span>
                       <span className="min-w-0">
@@ -78,7 +78,7 @@ export default function People() {
               })}
             </ul>
           )}
-          <p className="flex items-start gap-2.5 border-t border-slate-200 bg-slate-50 px-5 py-3.5 text-[13px] text-slate-600">
+          <p className="flex items-start gap-2.5 bg-slate-100 px-5 py-3.5 text-[13px] text-slate-600">
             <Lock size={15} className="mt-0.5 shrink-0" aria-hidden="true" />
             Changing a role asks you to confirm. The last admin can’t be demoted or removed, and you can’t remove yourself.
           </p>
@@ -88,8 +88,8 @@ export default function People() {
           <h2 id="roles-title" className="card-title">What each role can do</h2>
           <dl className="mt-2">
             {Object.entries(ROLE_CAN).map(([r, list]) => (
-              <div key={r} className="border-t border-slate-200 py-4 first:mt-3 last:pb-0">
-                <dt className="font-mono text-xs uppercase tracking-[.12em] text-amber-700">{ROLE_NAMES[r]}</dt>
+              <div key={r} className="py-4 first:mt-3 last:pb-0">
+                <dt className="text-sm font-semibold text-navy">{ROLE_NAMES[r]}</dt>
                 {list.map(t => <dd key={t} className="mt-2 flex items-start gap-2.5 text-[15px]"><Check size={16} className="mt-0.5 shrink-0 text-emerald-600" aria-hidden="true" />{t}</dd>)}
               </div>
             ))}
@@ -150,7 +150,7 @@ function AddPerson({ onClose, onAdded }) {
           {result.text}
           {result.password && (
             <span className="mt-3 flex flex-wrap items-center gap-2">
-              <code className="rounded-lg bg-white px-2.5 py-1.5 font-mono text-base text-navy">{result.password}</code>
+              <code className=" bg-white px-2.5 py-1.5 font-mono text-base text-navy">{result.password}</code>
               <button type="button" className="btn-ghost min-h-[36px] px-3" onClick={copy}>
                 {copied ? <><Check size={14} aria-hidden="true" /> Copied</> : <><Copy size={14} aria-hidden="true" /> Copy</>}
               </button>
@@ -169,7 +169,7 @@ function AddPerson({ onClose, onAdded }) {
             <legend className="label">Role</legend>
             <div className="grid gap-2">
               {Object.entries(ROLE_LABELS).map(([r, text]) => (
-                <label key={r} className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3.5 transition-colors ${role === r ? 'border-amber bg-amber-50/60' : 'border-slate-200 hover:border-slate-300'}`}>
+                <label key={r} className={`flex cursor-pointer items-start gap-3 border p-3.5 transition-colors ${role === r ? 'border-amber bg-amber-50/60' : 'border-slate-200 hover:border-slate-300'}`}>
                   <input type="radio" name="role" className="mt-1 accent-amber-600" checked={role === r} onChange={() => setRole(r)} />
                   <span><span className="block font-semibold">{ROLE_NAMES[r]}</span><span className="block text-sm text-slate-600">{text.split(' — ')[1]}</span></span>
                 </label>

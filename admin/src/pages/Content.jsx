@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { NavLink, useParams, useNavigate } from 'react-router-dom'
 import { CloudUpload, Eye, Undo2 } from 'lucide-react'
-import { ICONS, PLAN_STYLES, PRODUCT_STATUSES, youTubeId } from '../../../shared/render.js'
+import { PLAN_STYLES, PRODUCT_STATUSES, TILE_PICTURES, youTubeId } from '../../../shared/render.js'
 import { sectionProblems, useDraft } from '../lib/content'
 import { PageTitle } from '../components/Layout'
-import { Area, Lines, ListEditor, Notice, Problems, Select, Text, Toggle } from '../components/fields'
+import { Area, Lines, ListEditor, Notice, Problems, Select, Skeleton, Text, Toggle } from '../components/fields'
 import Preview, { LivePreview } from '../components/Preview'
 import { PublishDialog, SECTION_LABELS, SECTION_TAB } from '../components/Publish'
 
@@ -46,7 +46,7 @@ export default function Content() {
   )
   useEffect(() => { if (!problems.length) setShowProblems(false) }, [problems.length])
   if (draft.error) return <Notice tone="error">{draft.error}</Notice>
-  if (draft.loading) return <p className="text-sm text-slate-600">Loading the website content…</p>
+  if (draft.loading) return <div className="card"><Skeleton rows={4} /></div>
 
   const dirty = draft.dirty
   async function save() {
@@ -81,12 +81,12 @@ export default function Content() {
         <button type="button" className="btn-primary" onClick={() => setPublishing(true)}>Publish… <CloudUpload size={16} aria-hidden="true" /></button>
       </PageTitle>
 
-      <nav aria-label="Parts of the page" className="-mx-1 mb-6 flex gap-1 overflow-x-auto border-b border-slate-200 px-1">
+      <nav aria-label="Parts of the page" className="-mx-1 mb-6 flex gap-1 overflow-x-auto px-1">
         {TABS.map(t => {
           const edited = t.sections.some(s => dirty.includes(s))
           return (
             <NavLink key={t.key} to={`/content/${t.key}`}
-              className={({ isActive }) => `relative -mb-px flex min-h-[44px] items-center gap-2 whitespace-nowrap border-b-2 px-3 text-[15px] font-semibold transition-colors ${isActive || (t.key === 'top' && tab === 'top') ? 'border-amber text-navy' : 'border-transparent text-slate-600 hover:text-navy'}`}>
+              className={({ isActive }) => `relative flex min-h-[44px] items-center gap-2 whitespace-nowrap px-3 text-[15px] font-semibold transition-colors ${isActive || (t.key === 'top' && tab === 'top') ? 'bg-navy text-white' : 'bg-white text-slate-700 hover:text-navy'}`}>
               {t.label}{edited && <span className="h-2 w-2 rounded-full bg-amber" title="Unsaved changes" />}{edited && <span className="sr-only">(unsaved changes)</span>}
             </NavLink>
           )
@@ -103,7 +103,7 @@ export default function Content() {
           )}
           <active.Editor draft={draft} />
           {dirty.length > 0 && (
-            <div className="sticky bottom-4 z-20 flex animate-fade-up flex-wrap items-center justify-between gap-3 rounded-2xl bg-navy px-5 py-3 text-white shadow-lift">
+            <div className="sticky bottom-4 z-20 flex animate-fade-up flex-wrap items-center justify-between gap-3 bg-navy px-5 py-3 text-white shadow-lift">
               <p className="text-sm">Unsaved changes in {dirty.map(n => SECTION_LABELS[n]).join(', ')}</p>
               <div className="flex gap-2">
                 <button type="button" className="btn text-slate-200 hover:bg-white/10" onClick={() => { if (confirm('Throw away all your unsaved changes?')) draft.discard(dirty) }}>
@@ -154,7 +154,6 @@ const useSection = (draft, name) => {
 function TopEditor({ draft }) {
   const [a, setA] = useSection(draft, 'announcement')
   const [h, setH] = useSection(draft, 'hero')
-  const words = [...new Set(`${h.headline_line1 || ''} ${h.headline_line2 || ''}`.split(/\s+/).filter(Boolean))]
   return (
     <>
       <Card title="Announcement bar" sub="A strip across the very top of the site, for news or offers." section="announcement" draft={draft}
@@ -172,13 +171,11 @@ function TopEditor({ draft }) {
       </Card>
 
       <Card title="Headline" sub="The first thing visitors read." section="hero" draft={draft}>
-        <Text label="Small label above the headline" value={h.eyebrow} max={60} onChange={eyebrow => setH({ eyebrow })} />
         <div className="grid gap-4 sm:grid-cols-2">
-          <Text label="Headline, line 1" value={h.headline_line1} max={40} onChange={headline_line1 => setH({ headline_line1 })} />
+          <Text label="Headline, line 1" value={h.headline_line1} max={40} onChange={headline_line1 => setH({ headline_line1 })}
+            help="Keep each line to about 12 characters, so the headline stays on two lines on every screen." />
           <Text label="Headline, line 2" value={h.headline_line2} max={40} onChange={headline_line2 => setH({ headline_line2 })} />
         </div>
-        <Select label="Word shown in amber" value={h.highlight} onChange={highlight => setH({ highlight })}
-          options={{ '': 'None', ...Object.fromEntries(words.map(w => [w, w])) }} />
         <Area label="Paragraph under the headline" value={h.sub} max={400} onChange={sub => setH({ sub })} />
         <div className="grid gap-4 sm:grid-cols-2">
           <Text label="Main button text" value={h.primary_label} max={30} onChange={primary_label => setH({ primary_label })} />
@@ -188,7 +185,7 @@ function TopEditor({ draft }) {
         </div>
       </Card>
 
-      <Card title="Numbers under the headline" sub="Up to four. Whole numbers count up when they come into view." section="hero" draft={draft}>
+      <Card title="Numbers under the headline" sub="Up to four. The first sits large on the amber block beside the photo; the rest follow it as a line." section="hero" draft={draft}>
         <ListEditor items={h.stats} onChange={stats => setH({ stats })} max={4} addLabel="Add a number"
           itemLabel={(s, i) => `Number ${i + 1}`} make={() => ({ value: '', label: '' })}
           render={(s, set) => (
@@ -209,21 +206,9 @@ const newProduct = () => ({
   modules: [], url: '', link_note: '', cta_label: 'Book a demo', cta_link: '#contact',
 })
 
-function IconPicker({ value, onChange }) {
-  return (
-    <fieldset>
-      <legend className="label">Icon</legend>
-      <div className="flex flex-wrap gap-2">
-        {Object.entries(ICONS).map(([key, svg]) => (
-          <button key={key} type="button" title={key} aria-label={key} aria-pressed={value === key} onClick={() => onChange(key)}
-            className={`flex h-11 w-11 items-center justify-center rounded-xl border transition-colors ${value === key ? 'border-amber-600 bg-amber-50 ring-2 ring-amber/40' : 'border-slate-200 bg-white hover:border-slate-400'}`}>
-            {/* ICONS are fixed drawings from the renderer, not user content */}
-            <svg viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5" aria-hidden="true" dangerouslySetInnerHTML={{ __html: svg }} />
-          </button>
-        ))}
-      </div>
-    </fieldset>
-  )
+function PicturePicker({ value, onChange }) {
+  return <Select label="Tile picture" value={value} onChange={onChange} options={TILE_PICTURES}
+    help="Photos are credited in the site footer. A screen is the product's own interface, drawn on the page." />
 }
 
 function ProductsEditor({ draft }) {
@@ -249,7 +234,7 @@ function ProductsEditor({ draft }) {
                 <Text label="Sector" value={it.sector} max={40} onChange={sector => set({ sector })} placeholder="e.g. Mining & industrial…" />
                 <Select label="Badge" value={it.status} onChange={status => set({ status })} options={PRODUCT_STATUSES} />
               </div>
-              <IconPicker value={it.icon} onChange={icon => set({ icon })} />
+              <PicturePicker value={it.icon} onChange={icon => set({ icon })} />
               <Area label="Description" value={it.description} max={400} onChange={description => set({ description })} />
               <Lines label="Features (small tags)" value={it.modules} onChange={modules => set({ modules })} placeholder={'HR & payroll\nInventory'} />
               <div className="grid gap-4 sm:grid-cols-2">

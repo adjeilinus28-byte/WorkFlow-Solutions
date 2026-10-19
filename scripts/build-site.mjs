@@ -55,6 +55,9 @@ mkdirSync(dist, { recursive: true })
 // Everything at the top level that the site serves
 const STATIC = /\.(html|png|jpe?g|ico|txt|xml|svg|webp)$/i
 for (const f of readdirSync(root)) if (STATIC.test(f) || f === '_headers') copyFileSync(new URL(f, root), new URL(f, dist))
+// The page's pictures and film (their credits are in the footer)
+mkdirSync(new URL('assets/', dist))
+for (const f of readdirSync(new URL('assets/', root))) if (/\.(jpe?g|png|webp|webm|mp4)$/i.test(f)) copyFileSync(new URL(`assets/${f}`, root), new URL(`assets/${f}`, dist))
 
 writeFileSync(new URL('index.html', dist), renderHome(read('index.html'), content, defaults))
 for (const f of ['privacy.html', 'terms.html']) writeFileSync(new URL(f, dist), renderPage(read(f), content, defaults))

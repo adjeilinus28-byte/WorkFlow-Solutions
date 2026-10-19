@@ -6,33 +6,23 @@
     "link_url": ""
   },
   "hero": {
-    "eyebrow": "Operations software · Built in Ghana",
-    "headline_line1": "Run every layer",
-    "headline_line2": "of your operation",
-    "highlight": "layer",
-    "sub": "Purpose-built software for mine sites, hospitals, distributors and institutions — replacing spreadsheets and paper trails with live control over people, assets, inventory and compliance, in one platform.",
-    "primary_label": "Explore solutions",
-    "primary_link": "#products",
-    "secondary_label": "Book a demo",
-    "secondary_link": "#contact",
+    "headline_line1": "Run every site",
+    "headline_line2": "from one system.",
+    "sub": "Operations software for mines, hospitals, distributors and institutions in Ghana. People, assets, stock, fleet and compliance in one secure platform, live on your own data before you pay a cedi.",
+    "primary_label": "Book a demo",
+    "primary_link": "#contact",
+    "secondary_label": "Explore the platforms",
+    "secondary_link": "#products",
     "stats": [
       {
         "value": "5",
-        "label": "Platforms in production"
-      },
-      {
-        "value": "3",
-        "label": "Sectors served"
-      },
-      {
-        "value": "30",
-        "label": "Day free trial"
+        "label": "Platforms live in production"
       }
     ]
   },
   "products": {
-    "title": "Five platforms, live today",
-    "note": "All built on one multi-tenant core",
+    "title": "Five platforms. One secure core.",
+    "note": "Run one, or run them together, on one secure core.",
     "items": [
       {
         "show": true,
@@ -41,7 +31,7 @@
         "sector": "Mining & industrial",
         "name": "WFS ERP",
         "short_name": "",
-        "description": "The operations backbone. Everything that used to live in six separate spreadsheets — staff, payroll, stock, assets, attendance, approvals — running as one system with role-based access throughout.",
+        "description": "The operations backbone. Everything that used to live in six separate spreadsheets (staff, payroll, stock, assets, attendance, approvals) running as one system with role-based access throughout.",
         "modules": [
           "HR & payroll",
           "Inventory",
@@ -102,7 +92,7 @@
         "sector": "Retail & SME",
         "name": "WFS Sales Manager",
         "short_name": "Sales Manager",
-        "description": "Business management for shops and distributors, with real double-entry accounting underneath. Stock, sales, payments and fixed assets post straight to the ledger — so the balance sheet is the actual balance sheet.",
+        "description": "Business management for shops and distributors, with real double-entry accounting underneath. Stock, sales, payments and fixed assets post straight to the ledger, so the balance sheet is the actual balance sheet.",
         "modules": [
           "Sales & stock",
           "Double-entry ledger",
@@ -122,7 +112,7 @@
         "sector": "Healthcare",
         "name": "MediStaff",
         "short_name": "",
-        "description": "Hospital staff management — rosters, shift allocation, leave and departmental scheduling, with email notifications wired into every approval step so requests don't stall on someone's desk.",
+        "description": "Hospital staff management: rosters, shift allocation, leave and departmental scheduling, with email notifications wired into every approval step so requests don't stall on someone's desk.",
         "modules": [
           "Rosters",
           "Shifts",
@@ -161,8 +151,8 @@
     "duration": "1:00"
   },
   "pricing": {
-    "title": "Quoted, not guessed",
-    "intro": "A two-person shop and a three-site mine need very different setups, so we price on what you actually need — team size, sites and modules. Tell us those three things and you'll have a figure within one business day. Every engagement starts with a 30-day free trial.",
+    "title": "Quoted, not guessed.",
+    "intro": "A two-person shop and a three-site mine need very different setups, so we price on what you actually need: team size, sites and modules. Tell us those three things and you'll have a figure within one business day. Every engagement starts with a 30-day free trial.",
     "plans": [
       {
         "style": "amber",
@@ -216,15 +206,15 @@
     "items": [
       {
         "q": "Why aren't your prices listed?",
-        "a": "Because a published figure would be wrong for most people reading it. What you pay depends on team size, how many sites you run and which modules you need — a single-branch shop and a three-site mine are not the same product. Send us those details and we'll give you an exact figure within one business day, with no obligation attached to it."
+        "a": "Because a published figure would be wrong for most people reading it. What you pay depends on team size, how many sites you run and which modules you need. A single-branch shop and a three-site mine are not the same product. Send us those details and we'll give you an exact figure within one business day, with no obligation attached to it."
       },
       {
         "q": "How does the 30-day free trial work?",
-        "a": "Your organisation is set up as its own tenant with every feature open for 30 days. No card required. At the end you can take the one-time licence, move to a monthly plan, or stop — and if you stop, you can export your data on the way out."
+        "a": "Your organisation is set up as its own tenant with every feature open for 30 days. No card required. At the end you can take the one-time licence, move to a monthly plan, or stop, and if you stop, you can export your data on the way out."
       },
       {
         "q": "Is our data separated from other organisations?",
-        "a": "Yes, and it's enforced in the database rather than the interface. Every platform uses PostgreSQL row-level security, so a query for records outside your organisation returns nothing — regardless of what the front end asks for. Access within your organisation is then controlled by roles and department scoping."
+        "a": "Yes, and it's enforced in the database rather than the interface. Every platform uses PostgreSQL row-level security, so a query for records outside your organisation returns nothing, regardless of what the front end asks for. Access within your organisation is then controlled by roles and department scoping."
       },
       {
         "q": "Can you import the spreadsheets we already have?",
@@ -236,7 +226,7 @@
       },
       {
         "q": "What payment methods do you accept?",
-        "a": "Bank transfer, mobile money (MTN, Telecel, AirtelTigo) and cards via Paystack. Institutional clients can be invoiced on their own terms — tell us what your finance department needs and we'll work to it."
+        "a": "Bank transfer, mobile money (MTN, Telecel, AirtelTigo) and cards via Paystack. Institutional clients can be invoiced on their own terms. Tell us what your finance department needs and we'll work to it."
       },
       {
         "q": "Does it work when the network drops?",
@@ -244,7 +234,7 @@
       },
       {
         "q": "Will it carry our branding or yours?",
-        "a": "Yours. Every platform is white-labelled — your organisation's name and logo appear in the interface, on exports and on generated PDFs. We appear as a small maker's mark in the footer and nowhere else."
+        "a": "Yours. Every platform is white-labelled: your organisation's name and logo appear in the interface, on exports and on generated PDFs. We appear as a small maker's mark in the footer and nowhere else."
       }
     ]
   },

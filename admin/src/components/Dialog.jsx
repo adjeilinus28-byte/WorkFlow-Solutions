@@ -36,16 +36,16 @@ export default function Dialog({ title, sub, onClose, children, footer, wide }) 
     <div className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-6">
       <div className="absolute inset-0 animate-fade-in bg-slate-900/50" onClick={onClose} aria-hidden="true" />
       <div ref={ref} role="dialog" aria-modal="true" aria-labelledby="dialog-title"
-        className={`relative flex max-h-[92vh] w-full animate-fade-up flex-col overflow-hidden rounded-t-3xl bg-white shadow-lift sm:rounded-3xl ${wide ? 'sm:max-w-2xl' : 'sm:max-w-lg'}`}>
-        <div className="flex items-start justify-between gap-4 border-b border-slate-200 px-6 py-5">
+        className={`relative flex max-h-[92vh] w-full animate-fade-up flex-col overflow-hidden bg-white shadow-lift sm: ${wide ? 'sm:max-w-2xl' : 'sm:max-w-lg'}`}>
+        <div className="flex items-start justify-between gap-4 px-6 py-5">
           <div className="min-w-0">
-            <h2 id="dialog-title" className="font-display text-xl font-extrabold tracking-tight text-navy">{title}</h2>
+            <h2 id="dialog-title" className="font-display text-xl font-bold tracking-[-0.02em] text-navy">{title}</h2>
             {sub && <p className="mt-1 text-sm text-slate-600">{sub}</p>}
           </div>
           <button type="button" className="btn-icon h-9 w-9" onClick={onClose} aria-label="Close"><X size={18} aria-hidden="true" /></button>
         </div>
         <div className="flex-1 overflow-y-auto overscroll-contain px-6 py-5">{children}</div>
-        {footer && <div className="flex flex-wrap items-center justify-end gap-2.5 border-t border-slate-200 bg-slate-50 px-6 py-4">{footer}</div>}
+        {footer && <div className="flex flex-wrap items-center justify-end gap-2.5 bg-slate-100 px-6 py-4">{footer}</div>}
       </div>
     </div>
   )

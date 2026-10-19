@@ -103,8 +103,8 @@ export function initials(name) {
 export const STATUS_TONES = {
   new: 'bg-sky-50 text-sky-700',
   contacted: 'bg-amber-50 text-amber-800',
-  demo_booked: 'bg-violet-50 text-violet-700',
-  trial: 'bg-indigo-50 text-indigo-700',
+  demo_booked: 'bg-teal-50 text-teal-800',
+  trial: 'bg-orange-50 text-orange-800',
   won: 'bg-emerald-50 text-emerald-700',
   lost: 'bg-slate-100 text-slate-600',
   spam: 'bg-red-50 text-red-700',

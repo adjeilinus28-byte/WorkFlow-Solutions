@@ -25,21 +25,20 @@ function Motif() {
 
 function Shell({ title, sub, children }) {
   return (
-    <div className="min-h-screen bg-slate-50 lg:grid lg:grid-cols-[minmax(0,640px)_1fr]">
+    <div className="min-h-dvh bg-slate-50 lg:grid lg:grid-cols-[minmax(0,640px)_1fr]">
       <aside className="relative hidden overflow-hidden bg-navy-950 p-12 text-white lg:flex lg:flex-col lg:justify-between">
-        <div className="pointer-events-none absolute -left-20 top-[260px] h-[800px] w-[800px] rounded-full bg-[radial-gradient(closest-side,rgba(245,158,11,.18),transparent)]" aria-hidden="true" />
         <div className="relative"><Logo tag="Admin" /></div>
         <div className="relative py-10"><Motif /></div>
         <div className="relative max-w-[520px]">
-          <p className="text-balance font-display text-[46px] font-extrabold leading-[1.04] tracking-tight">Change the site. See it. Publish it.</p>
+          <p className="text-balance font-display text-[46px] font-bold leading-[1.04] tracking-[-0.02em]">Change the site. See it. Publish it.</p>
           <p className="mt-5 text-lg leading-relaxed text-slate-300">Edit what workflow-app.net says, follow up every lead from the contact form, and publish — without touching code.</p>
         </div>
       </aside>
-      <div className="flex min-h-screen flex-col lg:min-h-0">
+      <div className="flex min-h-dvh flex-col lg:min-h-0">
         <div className="bg-navy px-5 py-4 lg:hidden"><Logo tag="Admin" size="sm" /></div>
         <main id="main" className="flex flex-1 items-center justify-center px-4 py-10 sm:px-8">
-          <div className="w-full max-w-[420px] animate-fade-up rounded-3xl border border-slate-200 bg-white p-7 shadow-lift sm:p-10">
-            <h1 className="font-display text-[30px] font-extrabold leading-tight tracking-tight">{title}</h1>
+          <div className="w-full max-w-[420px] animate-fade-up bg-white p-7 sm:p-10">
+            <h1 className="font-display text-[30px] font-bold leading-tight tracking-[-0.02em]">{title}</h1>
             {sub && <p className="mt-1.5 text-[15px] text-slate-600">{sub}</p>}
             <div className="mt-6">{children}</div>
           </div>
@@ -99,7 +98,7 @@ export function SignIn() {
         onClick={() => { setMode(m => (m === 'signin' ? 'reset' : 'signin')); setMsg(null); setWrong(false) }}>
         {mode === 'signin' ? 'Forgot your password?' : 'Back to sign in'}
       </button>
-      <p className="mt-6 border-t border-slate-200 pt-5 text-[13px] leading-relaxed text-slate-600">
+      <p className="mt-8 bg-slate-100 p-4 text-[13px] leading-relaxed text-slate-600">
         Access is granted per person by a website admin. An ops-platform role doesn’t give access here, and a website role gives nothing in the ops platform.
       </p>
     </Shell>

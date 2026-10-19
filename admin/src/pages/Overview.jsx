@@ -4,7 +4,7 @@ import { ArrowRight, TrendingDown, TrendingUp } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { can, date, initials, OPEN_STATUSES, rpc, STATUS_LABELS, STATUS_TONES, when } from '../lib/api'
 import { PageTitle } from '../components/Layout'
-import { Notice } from '../components/fields'
+import { Notice, Skeleton } from '../components/fields'
 import { ChangesCard } from '../components/Publish'
 import { useDraft } from '../lib/content'
 import { ActivityItem } from './Activity'
@@ -72,7 +72,7 @@ function LivePill() {
 function ContentChanges() {
   const draft = useDraft()
   if (draft.error) return <Notice tone="error">{draft.error}</Notice>
-  if (draft.loading) return <div className="card text-sm text-slate-600">Loading the website content…</div>
+  if (draft.loading) return <div className="card"><Skeleton rows={2} /></div>
   return <ChangesCard />
 }
 
@@ -81,14 +81,14 @@ function Tile({ label, value, foot, children, to }) {
     <>
       <p className="text-sm text-slate-600">{label}</p>
       <div className="mt-2 flex items-end justify-between gap-3">
-        <p className="font-display text-[32px] font-extrabold leading-none tabular-nums tracking-tight text-navy">{value}</p>
+        <p className="font-display text-[32px] font-bold leading-none tabular-nums tracking-[-0.02em] text-navy">{value}</p>
         {children}
       </div>
       {foot && <p className="mt-3 text-[13px] text-slate-600">{foot}</p>}
     </>
   )
   return to
-    ? <Link to={to} className="card block animate-fade-up p-5 transition-colors hover:border-slate-300">{body}</Link>
+    ? <Link to={to} className="card block animate-fade-up p-5 transition-[transform,border-color] duration-700 ease-fluid hover:-translate-y-1 hover:border-navy/[.14]">{body}</Link>
     : <div className="card animate-fade-up p-5">{body}</div>
 }
 
@@ -171,10 +171,10 @@ function LeadsChart({ leads }) {
         </div>
         <button type="button" className="link" onClick={() => setTable(t => !t)} aria-pressed={table}>{table ? 'View as chart' : 'View as table'}</button>
       </div>
-      {!leads ? <p className="mt-6 text-sm text-slate-600">Loading…</p> : table ? (
+      {!leads ? <div role="status" className="mt-6 flex h-40 items-end gap-2"><span className="sr-only">Loading…</span>{[40, 65, 30, 80, 55, 70, 45, 90].map((h, i) => <span key={i} aria-hidden="true" className="skel flex-1" style={{ height: `${h}%` }} />)}</div> : table ? (
         <table className="mt-5 w-full text-sm">
-          <thead><tr className="eyebrow text-left"><th className="py-2 font-normal">Week starting</th><th className="py-2 text-right font-normal">New leads</th></tr></thead>
-          <tbody className="divide-y divide-slate-100">
+          <thead><tr className="col-head text-left"><th className="py-2 font-normal">Week starting</th><th className="py-2 text-right font-normal">New leads</th></tr></thead>
+          <tbody className="[&>*:nth-child(even)]:bg-slate-50">
             {weeks.map((w, i) => <tr key={i}><td className="py-2">{date(w.from)}{i === 7 && ' (this week)'}</td><td className="py-2 text-right tabular-nums">{w.count}</td></tr>)}
           </tbody>
         </table>
@@ -183,22 +183,22 @@ function LeadsChart({ leads }) {
           <div className="relative h-44">
             {[0, 0.5, 1].map(f => (
               <div key={f} className="absolute inset-x-0 flex items-center gap-2" style={{ bottom: `${f * 100}%` }}>
-                <span className="w-4 -translate-y-1/2 text-right font-mono text-[11px] text-slate-500">{f ? top * f : ''}</span>
-                <span className="h-px flex-1 bg-slate-100" />
+                <span className="w-4 -translate-y-1/2 text-right text-[13px] tabular-nums text-slate-500">{f ? top * f : ''}</span>
+                <span className="h-px flex-1 bg-slate-100" />{/* taste-skill-ignore: chart gridline */}
               </div>
             ))}
             <div className="absolute inset-y-0 left-6 right-0 flex items-end justify-around gap-2">
               {weeks.map((w, i) => (
                 <div key={i} className="relative flex h-full w-full max-w-[36px] flex-col justify-end">
                   {i === 7 && <span className="absolute -top-1 left-1/2 -translate-x-1/2 -translate-y-full whitespace-nowrap text-xs font-semibold text-amber-700">{w.count} this week</span>}
-                  <div className={`origin-bottom animate-grow rounded-t-md ${i === 7 ? 'bg-amber-600' : 'bg-slate-400'}`}
+                  <div className={`origin-bottom animate-grow ${i === 7 ? 'bg-amber-600' : 'bg-slate-400'}`}
                     style={{ height: `${(w.count / top) * 100}%`, minHeight: w.count ? 4 : 0, animationDelay: `${i * 50}ms` }} />
                 </div>
               ))}
             </div>
           </div>
-          <div className="ml-6 mt-2 flex justify-around gap-2 border-t border-slate-200 pt-2">
-            {weeks.map((w, i) => <span key={i} className="w-full max-w-[36px] text-center font-mono text-[10.5px] uppercase leading-tight text-slate-500">{date(w.from)}</span>)}
+          <div className="ml-6 mt-2 flex justify-around gap-2 pt-2">
+            {weeks.map((w, i) => <span key={i} className="w-full max-w-[36px] text-center text-[13px] leading-tight text-slate-500">{date(w.from)}</span>)}
           </div>
         </div>
       )}
@@ -217,13 +217,13 @@ function RecentLeads({ leads }) {
         <h2 id="recent-title" className="card-title">Recent leads</h2>
         <Link to="/leads" className="link">Open inbox <ArrowRight size={15} aria-hidden="true" /></Link>
       </div>
-      {!leads ? <p className="mt-4 text-sm text-slate-600">Loading…</p>
+      {!leads ? <Skeleton rows={3} className="mt-5" />
         : leads.leads.length === 0 ? <p className="mt-4 text-sm text-slate-600">No messages yet. They appear here as soon as someone uses the contact form.</p>
         : (
           <ul className="mt-3">
             {leads.leads.slice(0, 4).map(l => (
               <li key={l.id}>
-                <Link to={`/leads?open=${l.id}`} className="group flex items-center gap-3 rounded-xl py-2.5">
+                <Link to={`/leads?open=${l.id}`} className="group flex items-center gap-3 py-2.5">
                   <span className="avatar">{initials(`${l.first_name} ${l.last_name}`)}</span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate font-semibold text-navy group-hover:text-amber-700">{l.first_name} {l.last_name}</span>
@@ -246,7 +246,7 @@ function RecentActivity({ rows }) {
         <h2 id="activity-title" className="card-title">Activity</h2>
         <Link to="/activity" className="link">All activity <ArrowRight size={15} aria-hidden="true" /></Link>
       </div>
-      {!rows ? <p className="mt-4 text-sm text-slate-600">Loading…</p>
+      {!rows ? <Skeleton rows={3} className="mt-5" />
         : rows.length === 0 ? <p className="mt-4 text-sm text-slate-600">Nothing yet.</p>
         : <ol className="mt-2">{rows.map(r => <ActivityItem key={r.id} row={r} stamp={when} />)}</ol>}
     </section>
