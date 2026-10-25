@@ -204,11 +204,11 @@ function spaced(open, blocks, close) {
 }
 
 // Live platforms first, then the ones coming soon, then custom ones. A custom
-// platform (one with a website or a screenshot) is a normal card marked
-// "Custom"; an open-ended custom offer is the amber invitation card, last.
+// platform is a normal card marked "Custom"; the open-ended custom offer (the
+// star icon, no screenshot) is the amber invitation card, last.
 function products(p, ind) {
   const shown = (p.items || []).filter(it => it.show !== false)
-  const isInvite = it => it.status === 'custom' && !it.url && !isMediaUrl(it.image)
+  const isInvite = it => it.status === 'custom' && it.icon === 'star' && !isMediaUrl(it.image)
   const ordered = [...shown.filter(it => it.status === 'live'), ...shown.filter(it => it.status === 'coming_soon'), ...shown.filter(it => it.status === 'custom' && !isInvite(it))]
   const cards = ordered.map(it => platformCard(it, `${ind}  `))
   const custom = shown.filter(isInvite).map(it => customCard(it, `${ind}  `))

@@ -110,6 +110,12 @@ test('uploaded screenshots replace the amber field, and only site-media images a
   const out = renderHome(home, c, defaults)
   assert.match(out, new RegExp(`<img class="plat-shot" src="${shot.replace(/[.?]/g, '\$&')}" alt="Screenshot of WFS ERP"`))
   assert.match(out, /<div class="plat-pic"><img class="plat-shot"/)
+  // a custom platform without a website or screenshot is still a normal card
+  const c2 = clone(defaults); Object.assign(c2.products.items[0], { status: 'custom', url: '' })
+  const grid2 = renderHome(home, c2, defaults).split('<!--cms:products-->')[1].split('<!--/cms:products-->')[0]
+  assert.equal((grid2.match(/class="plat-custom/g) || []).length, 1)
+  assert.match(grid2, /<h3>WFS ERP<\/h3>/)
+  assert.ok(grid2.indexOf('<h3>WFS ERP</h3>') < grid2.indexOf('class="plat-custom'), 'the custom platform is a normal card before the invitation')
   // a custom item with a screenshot is a normal card, not the amber invitation
   c.products.items[5].image = shot.replace('wfs-erp-1', 'custom-2')
   const grid = renderHome(home, c, defaults).split('<!--cms:products-->')[1].split('<!--/cms:products-->')[0]
