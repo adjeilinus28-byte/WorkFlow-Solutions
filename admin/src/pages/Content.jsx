@@ -6,6 +6,7 @@ import { sectionProblems, useDraft } from '../lib/content'
 import { PageTitle } from '../components/Layout'
 import { Area, Lines, ListEditor, Notice, Problems, Select, Skeleton, Text, Toggle } from '../components/fields'
 import Preview, { LivePreview } from '../components/Preview'
+import ScreenshotUpload from '../components/ScreenshotUpload'
 import { PublishDialog, SECTION_LABELS, SECTION_TAB } from '../components/Publish'
 
 const LINK_HELP = 'A part of the page (#contact, #products…) or a full web address (https://…)'
@@ -203,12 +204,12 @@ function TopEditor({ draft }) {
 
 const newProduct = () => ({
   show: true, icon: 'box', status: 'coming_soon', sector: '', name: '', short_name: '', description: '',
-  modules: [], url: '', link_note: '', cta_label: 'Book a demo', cta_link: '#contact',
+  modules: [], url: '', link_note: '', image: '', cta_label: 'Book a demo', cta_link: '#contact',
 })
 
 function PicturePicker({ value, onChange }) {
-  return <Select label="Tile picture" value={value} onChange={onChange} options={TILE_PICTURES}
-    help="Photos are credited in the site footer. A screen is the product's own interface, drawn on the page." />
+  return <Select label="Fallback photo" value={value} onChange={onChange} options={TILE_PICTURES}
+    help="Shown when there is no screenshot. Photos are credited in the site footer." />
 }
 
 function ProductsEditor({ draft }) {
@@ -221,7 +222,7 @@ function ProductsEditor({ draft }) {
           <Text label="Small note beside it (optional)" value={p.note} max={60} onChange={note => setP({ note })} />
         </div>
       </Card>
-      <Card title="Product cards" sub="Live products lead, then the ones coming soon; a custom build gets its own strip. Products with a website also appear in the footer." section="products" draft={draft}>
+      <Card title="Product cards" sub="Live products lead, then the ones coming soon, then custom ones. Upload a screenshot of each platform to show it on its card. Products with a website also appear in the footer." section="products" draft={draft}>
         <ListEditor items={p.items} onChange={items => setP({ items })} addLabel="Add a product" make={newProduct} min={1}
           itemLabel={(it, i) => `${i + 1}. ${it.name || 'New product'}${it.show === false ? ' (hidden)' : ''}`}
           render={(it, set) => (
@@ -234,6 +235,7 @@ function ProductsEditor({ draft }) {
                 <Text label="Sector" value={it.sector} max={40} onChange={sector => set({ sector })} placeholder="e.g. Mining & industrial…" />
                 <Select label="Badge" value={it.status} onChange={status => set({ status })} options={PRODUCT_STATUSES} />
               </div>
+              <ScreenshotUpload value={it.image} name={it.name} onChange={image => set({ image })} />
               <PicturePicker value={it.icon} onChange={icon => set({ icon })} />
               <Area label="Description" value={it.description} max={400} onChange={description => set({ description })} />
               <Lines label="Features (small tags)" value={it.modules} onChange={modules => set({ modules })} placeholder={'HR & payroll\nInventory'} />

@@ -100,6 +100,23 @@ test('validation catches the usual mistakes', () => {
   for (const s of ['Contact email', 'WhatsApp number', 'YouTube', 'at least one FAQ', 'at least one product']) assert.match(e, new RegExp(s))
 })
 
+test('uploaded screenshots replace the stock photo, and only site-media images are accepted', () => {
+  const c = clone(defaults)
+  const shot = 'https://ippsarwgvvlarlyqobvj.supabase.co/storage/v1/object/public/site-media/products/wfs-erp-1.png'
+  c.products.items[0].image = shot
+  assert.deepEqual(validateContent(c), [])
+  const out = renderHome(home, c, defaults)
+  assert.match(out, new RegExp(`<img class="plat-shot" src="${shot.replace(/[.?]/g, '\$&')}" alt="Screenshot of WFS ERP"`))
+  // a custom item with a screenshot is a normal card, not the amber invitation
+  c.products.items[5].image = shot.replace('wfs-erp-1', 'custom-2')
+  const grid = renderHome(home, c, defaults).split('<!--cms:products-->')[1].split('<!--/cms:products-->')[0]
+  assert.equal((grid.match(/class="plat-custom/g) || []).length, 0)
+  for (const bad of ['https://example.com/a.png', 'javascript:alert(1)', shot.replace('.png', '.svg')]) {
+    c.products.items[0].image = bad
+    assert.ok(validateContent(c).some(e => e.includes('screenshot must be uploaded')), bad)
+  }
+})
+
 test('YouTube links of every shape give the video ID', () => {
   for (const u of ['https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'https://youtu.be/dQw4w9WgXcQ?si=abc', 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'https://youtube.com/shorts/dQw4w9WgXcQ', 'dQw4w9WgXcQ'])
     assert.equal(youTubeId(u), 'dQw4w9WgXcQ', u)
