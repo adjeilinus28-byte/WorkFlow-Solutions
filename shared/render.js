@@ -169,7 +169,7 @@ const PHOTOS = {
   bag: { src: '/assets/kejetia-market.jpg', alt: 'The long market hall of Kejetia market in Kumasi, under its striped roof' },
   hospital: { src: '/assets/kath-hospital.jpg', alt: 'Komfo Anokye Teaching Hospital in Kumasi, seen across its lawn' },
 }
-const STATUS_CHIP = { live: 'Live', coming_soon: 'Coming soon' }
+const STATUS_CHIP = { live: 'Live', coming_soon: 'Coming soon', custom: 'Custom' }
 const urlLink = u => `<a href="${link(u)}" target="_blank" rel="noopener noreferrer" class="plat-url">${esc(displayUrl(u))}</a>`
 
 function platformCard(it, ind) {
@@ -210,11 +210,15 @@ function spaced(open, blocks, close) {
   return out
 }
 
-// Live platforms first, then the ones coming soon, then a custom build
+// Live platforms first, then the ones coming soon, then custom ones. A custom
+// platform with a photo is a normal card marked "Custom"; an open-ended
+// custom offer (no photo) is the amber invitation card, always last.
 function products(p, ind) {
   const shown = (p.items || []).filter(it => it.show !== false)
-  const cards = [...shown.filter(it => it.status === 'live'), ...shown.filter(it => it.status === 'coming_soon')].map(it => platformCard(it, `${ind}  `))
-  const custom = shown.filter(it => it.status === 'custom').map(it => customCard(it, `${ind}  `))
+  const isInvite = it => it.status === 'custom' && !PHOTOS[it.icon]
+  const ordered = [...shown.filter(it => it.status === 'live'), ...shown.filter(it => it.status === 'coming_soon'), ...shown.filter(it => it.status === 'custom' && !isInvite(it))]
+  const cards = ordered.map(it => platformCard(it, `${ind}  `))
+  const custom = shown.filter(isInvite).map(it => customCard(it, `${ind}  `))
   const head = [
     `${ind}<div class="sec-head rv">`,
     `${ind}  <p class="chip"><span class="dot"></span>The platforms</p>`,
