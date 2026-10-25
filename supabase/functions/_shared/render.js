@@ -22,12 +22,6 @@ export const ICONS = {
   box: '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/>',
 }
 
-// What a product's tile shows, keyed like ICONS (the stored field is still "icon")
-export const TILE_PICTURES = Object.fromEntries(Object.keys(ICONS).map(k => [k, {
-  grid: 'Photo: Kumasi from Kronum', mountain: 'Photo: Damang gold mine pit', truck: 'Photo: haul truck at the Ahafo mine',
-  bag: 'Photo: Kejetia market hall', hospital: 'Photo: Komfo Anokye Teaching Hospital',
-}[k] || 'The platform’s name, set large']))
-
 export const PRODUCT_STATUSES = { live: 'Live', coming_soon: 'Coming soon', custom: 'Custom' }
 // purple and blue are kept as keys so saved content still validates; both now draw in navy
 export const PLAN_STYLES = { amber: 'Amber', featured: 'Featured (Most popular)', purple: 'Navy', blue: 'Navy (alternate)' }
@@ -148,7 +142,7 @@ export function validateContent(c) {
 // ── Regions ────────────────────────────────────────────────
 //
 // The dark WorkFlow design (Figma: "WorkFlow Solutions — Website Redesign").
-// Pictures are real places in Ghana, credited in the footer.
+// The only pictures are screenshots of the platforms, uploaded in the admin.
 
 // "Day free trial" → "day free trial", for a label that continues a sentence
 const lower = s => { const t = String(s || ''); return t.charAt(0).toLowerCase() + t.slice(1) }
@@ -166,29 +160,20 @@ function hero(h, ind) {
   return out
 }
 
-// Every platform card carries a real photograph of its world in Ghana
-const PHOTOS = {
-  grid: { src: '/assets/kumasi-kronum.jpg', alt: 'Kumasi seen from the hills at Kronum, low roofs under a wide blue sky' },
-  mountain: { src: '/assets/damang-pit.jpg', alt: 'The terraced walls of the Damang gold mine pit in Ghana' },
-  truck: { src: '/assets/ahafo-pit.jpg', alt: 'A loaded haul truck crossing a dusty pit floor at the Ahafo gold mine, Ghana' },
-  bag: { src: '/assets/kejetia-market.jpg', alt: 'The long market hall of Kejetia market in Kumasi, under its striped roof' },
-  hospital: { src: '/assets/kath-hospital.jpg', alt: 'Komfo Anokye Teaching Hospital in Kumasi, seen across its lawn' },
-}
 const STATUS_CHIP = { live: 'Live', coming_soon: 'Coming soon', custom: 'Custom' }
 const urlLink = u => `<a href="${link(u)}" target="_blank" rel="noopener noreferrer" class="plat-url">${esc(displayUrl(u))}</a>`
 
-// An uploaded screenshot of the platform wins; otherwise a photo of its world
+// The card shows the screenshot uploaded in the admin; until there is one, the
+// brand's amber field with the platform's name
 function platformCard(it, ind) {
-  const photo = PHOTOS[it.icon]
-  const pic = isMediaUrl(it.image)
+  const shot = isMediaUrl(it.image)
+  const pic = shot
     ? `<img class="plat-shot" src="${esc(it.image)}" alt="${esc(`Screenshot of ${it.name}`)}" loading="lazy"/>`
-    : photo
-      ? `<img src="${photo.src}" alt="${esc(photo.alt)}" width="1400" height="1050" loading="lazy"/>`
-      : `<span class="plat-word" aria-hidden="true">${esc(it.short_name || it.name)}</span>`
+    : `<span class="plat-word" aria-hidden="true">${esc(it.short_name || it.name)}</span>`
   const note = it.url ? urlLink(it.url) : it.link_note ? `<span class="plat-note">${esc(it.link_note)}</span>` : ''
   const out = [
     `${ind}<article class="plat rv">`,
-    `${ind}  <div class="plat-pic">${pic}</div>`,
+    `${ind}  <div class="plat-pic${shot ? '' : ' plat-pic-amber'}">${pic}</div>`,
     `${ind}  <div class="plat-body">`,
     `${ind}    <p class="plat-top"><span class="caps">${esc(it.sector)}</span><span class="chip chip-sm"><span class="dot${it.status === 'live' ? ' live' : ''}"></span>${STATUS_CHIP[it.status] || 'Live'}</span></p>`,
     `${ind}    <h3>${esc(it.name)}</h3>`,
@@ -219,11 +204,11 @@ function spaced(open, blocks, close) {
 }
 
 // Live platforms first, then the ones coming soon, then custom ones. A custom
-// platform with a picture is a normal card marked "Custom"; an open-ended
-// custom offer (no picture) is the amber invitation card, always last.
+// platform (one with a website or a screenshot) is a normal card marked
+// "Custom"; an open-ended custom offer is the amber invitation card, last.
 function products(p, ind) {
   const shown = (p.items || []).filter(it => it.show !== false)
-  const isInvite = it => it.status === 'custom' && !PHOTOS[it.icon] && !isMediaUrl(it.image)
+  const isInvite = it => it.status === 'custom' && !it.url && !isMediaUrl(it.image)
   const ordered = [...shown.filter(it => it.status === 'live'), ...shown.filter(it => it.status === 'coming_soon'), ...shown.filter(it => it.status === 'custom' && !isInvite(it))]
   const cards = ordered.map(it => platformCard(it, `${ind}  `))
   const custom = shown.filter(isInvite).map(it => customCard(it, `${ind}  `))

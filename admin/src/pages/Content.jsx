@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { NavLink, useParams, useNavigate } from 'react-router-dom'
 import { CloudUpload, Eye, Undo2 } from 'lucide-react'
-import { PLAN_STYLES, PRODUCT_STATUSES, TILE_PICTURES, youTubeId } from '../../../shared/render.js'
+import { PLAN_STYLES, PRODUCT_STATUSES, youTubeId } from '../../../shared/render.js'
 import { sectionProblems, useDraft } from '../lib/content'
 import { PageTitle } from '../components/Layout'
 import { Area, Lines, ListEditor, Notice, Problems, Select, Skeleton, Text, Toggle } from '../components/fields'
@@ -207,11 +207,6 @@ const newProduct = () => ({
   modules: [], url: '', link_note: '', image: '', cta_label: 'Book a demo', cta_link: '#contact',
 })
 
-function PicturePicker({ value, onChange }) {
-  return <Select label="Fallback photo" value={value} onChange={onChange} options={TILE_PICTURES}
-    help="Shown when there is no screenshot. Photos are credited in the site footer." />
-}
-
 function ProductsEditor({ draft }) {
   const [p, setP] = useSection(draft, 'products')
   return (
@@ -236,7 +231,6 @@ function ProductsEditor({ draft }) {
                 <Select label="Badge" value={it.status} onChange={status => set({ status })} options={PRODUCT_STATUSES} />
               </div>
               <ScreenshotUpload value={it.image} name={it.name} onChange={image => set({ image })} />
-              <PicturePicker value={it.icon} onChange={icon => set({ icon })} />
               <Area label="Description" value={it.description} max={400} onChange={description => set({ description })} />
               <Lines label="Features (small tags)" value={it.modules} onChange={modules => set({ modules })} placeholder={'HR & payroll\nInventory'} />
               <div className="grid gap-4 sm:grid-cols-2">

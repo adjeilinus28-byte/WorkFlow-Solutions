@@ -57,7 +57,9 @@ test('edits reach the page', () => {
   const grid = out.slice(out.indexOf('class="plat-grid"'), out.indexOf('<!--/cms:products-->'))
   assert.ok(grid.indexOf('WFS Guard') > grid.indexOf('MediStaff'), 'coming-soon tiles follow the live ones')
   assert.ok(grid.indexOf('Something built for you') > grid.indexOf('WFS Guard'), 'the custom build comes last')
-  assert.match(grid, /<article class="plat rv">[\s\S]*?kumasi-kronum\.jpg[\s\S]*?<h3>WFS ERP Cloud<\/h3>/)
+  // No screenshot yet: the amber field with the platform's name, and no stock photos anywhere
+  assert.match(grid, /<article class="plat rv">\s*<div class="plat-pic plat-pic-amber"><span class="plat-word" aria-hidden="true">[^<]+<\/span><\/div>[\s\S]*?<h3>WFS ERP Cloud<\/h3>/)
+  assert.doesNotMatch(out, /\/assets\/|class="credits"/)
 })
 
 test('contact details change everywhere, including structured data and the other pages', () => {
@@ -100,13 +102,14 @@ test('validation catches the usual mistakes', () => {
   for (const s of ['Contact email', 'WhatsApp number', 'YouTube', 'at least one FAQ', 'at least one product']) assert.match(e, new RegExp(s))
 })
 
-test('uploaded screenshots replace the stock photo, and only site-media images are accepted', () => {
+test('uploaded screenshots replace the amber field, and only site-media images are accepted', () => {
   const c = clone(defaults)
   const shot = 'https://ippsarwgvvlarlyqobvj.supabase.co/storage/v1/object/public/site-media/products/wfs-erp-1.png'
   c.products.items[0].image = shot
   assert.deepEqual(validateContent(c), [])
   const out = renderHome(home, c, defaults)
   assert.match(out, new RegExp(`<img class="plat-shot" src="${shot.replace(/[.?]/g, '\$&')}" alt="Screenshot of WFS ERP"`))
+  assert.match(out, /<div class="plat-pic"><img class="plat-shot"/)
   // a custom item with a screenshot is a normal card, not the amber invitation
   c.products.items[5].image = shot.replace('wfs-erp-1', 'custom-2')
   const grid = renderHome(home, c, defaults).split('<!--cms:products-->')[1].split('<!--/cms:products-->')[0]

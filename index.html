@@ -234,7 +234,8 @@ main:focus{outline:none}
 .plat-pic img{width:100%;height:100%;object-fit:cover;transition:transform 1s var(--ease)}
 .plat:hover .plat-pic img{transform:scale(1.05)}
 .plat-pic .plat-shot{object-position:top left}
-.plat-word{display:flex;align-items:flex-end;height:100%;padding:20px;font-family:var(--display);font-size:30px;font-weight:700}
+.plat-pic-amber{background:linear-gradient(135deg,#FBBF24,#B45309)}
+.plat-word{display:flex;align-items:flex-end;height:100%;padding:24px;font-family:var(--display);font-size:clamp(28px,2.6vw,36px);font-weight:700;line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
 .plat-body{display:flex;flex:1;flex-direction:column;gap:12px;padding:24px}
 .plat-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .plat h3{font-size:26px}
@@ -297,9 +298,9 @@ main:focus{outline:none}
 .cta-copy h2{font-size:clamp(32px,3.9vw,56px)}
 .cta-copy p{font-size:clamp(17px,1.5vw,21px);line-height:1.5}
 .cta-btns{display:flex;flex-wrap:wrap;gap:14px}
-.cta-photo{min-height:320px}
-.cta-photo img{width:100%;height:100%;object-fit:cover}
-@media (max-width:899px){.cta-band{grid-template-columns:1fr}.cta-photo{min-height:260px;order:-1}}
+.cta-mark{display:grid;place-items:center;min-height:320px;padding:48px;background:rgba(11,17,32,.06)}
+.cta-mark svg{width:min(78%,360px);height:auto}
+@media (max-width:899px){.cta-band{grid-template-columns:1fr}.cta-mark{min-height:0;padding:32px 28px 0;place-items:start}.cta-mark svg{width:120px}}
 
 /* Video (shown once a YouTube ID is set) */
 .video-frame{position:relative;aspect-ratio:16/9;overflow:hidden;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--raised)}
@@ -384,8 +385,6 @@ textarea.inp{min-height:150px;resize:vertical;line-height:1.55}
 .wordmark{margin-top:64px}
 .wordmark svg{width:100%;height:auto;fill:var(--line-strong)}
 .legal{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;margin-top:24px;font-size:14px;color:var(--muted)}
-.credits{display:grid;gap:4px;margin-top:20px;font-size:13px;color:var(--muted)}
-.credits a{color:var(--text-2)}
 @media (max-width:959px){.foot-cols{grid-template-columns:1fr 1fr}.foot-brand{grid-column:1/-1}}
 @media (max-width:479px){.foot-cols{grid-template-columns:1fr}}
 
@@ -541,7 +540,7 @@ textarea.inp{min-height:150px;resize:vertical;line-height:1.55}
     <div class="plat-grid" data-stagger>
 
       <article class="plat rv">
-        <div class="plat-pic"><img src="/assets/kumasi-kronum.jpg" alt="Kumasi seen from the hills at Kronum, low roofs under a wide blue sky" width="1400" height="1050" loading="lazy"/></div>
+        <div class="plat-pic plat-pic-amber"><span class="plat-word" aria-hidden="true">WFS ERP</span></div>
         <div class="plat-body">
           <p class="plat-top"><span class="caps">Mining &amp; industrial</span><span class="chip chip-sm"><span class="dot live"></span>Live</span></p>
           <h3>WFS ERP</h3>
@@ -552,7 +551,7 @@ textarea.inp{min-height:150px;resize:vertical;line-height:1.55}
       </article>
 
       <article class="plat rv">
-        <div class="plat-pic"><img src="/assets/damang-pit.jpg" alt="The terraced walls of the Damang gold mine pit in Ghana" width="1400" height="1050" loading="lazy"/></div>
+        <div class="plat-pic plat-pic-amber"><span class="plat-word" aria-hidden="true">TSF Monitor</span></div>
         <div class="plat-body">
           <p class="plat-top"><span class="caps">Mining</span><span class="chip chip-sm"><span class="dot live"></span>Live</span></p>
           <h3>WFS TSF Monitor</h3>
@@ -563,7 +562,7 @@ textarea.inp{min-height:150px;resize:vertical;line-height:1.55}
       </article>
 
       <article class="plat rv">
-        <div class="plat-pic"><img src="/assets/ahafo-pit.jpg" alt="A loaded haul truck crossing a dusty pit floor at the Ahafo gold mine, Ghana" width="1400" height="1050" loading="lazy"/></div>
+        <div class="plat-pic plat-pic-amber"><span class="plat-word" aria-hidden="true">Fleet Manager</span></div>
         <div class="plat-body">
           <p class="plat-top"><span class="caps">Fleet &amp; logistics</span><span class="chip chip-sm"><span class="dot live"></span>Live</span></p>
           <h3>WFS Fleet Manager</h3>
@@ -574,7 +573,7 @@ textarea.inp{min-height:150px;resize:vertical;line-height:1.55}
       </article>
 
       <article class="plat rv">
-        <div class="plat-pic"><img src="/assets/kejetia-market.jpg" alt="The long market hall of Kejetia market in Kumasi, under its striped roof" width="1400" height="1050" loading="lazy"/></div>
+        <div class="plat-pic plat-pic-amber"><span class="plat-word" aria-hidden="true">Sales Manager</span></div>
         <div class="plat-body">
           <p class="plat-top"><span class="caps">Retail &amp; SME</span><span class="chip chip-sm"><span class="dot live"></span>Live</span></p>
           <h3>WFS Sales Manager</h3>
@@ -585,7 +584,7 @@ textarea.inp{min-height:150px;resize:vertical;line-height:1.55}
       </article>
 
       <article class="plat rv">
-        <div class="plat-pic"><img src="/assets/kath-hospital.jpg" alt="Komfo Anokye Teaching Hospital in Kumasi, seen across its lawn" width="1400" height="1050" loading="lazy"/></div>
+        <div class="plat-pic plat-pic-amber"><span class="plat-word" aria-hidden="true">MediStaff</span></div>
         <div class="plat-body">
           <p class="plat-top"><span class="caps">Healthcare</span><span class="chip chip-sm"><span class="dot live"></span>Live</span></p>
           <h3>MediStaff</h3>
@@ -749,7 +748,7 @@ textarea.inp{min-height:150px;resize:vertical;line-height:1.55}
         <p>Every module open, your records imported, your people trained. If it doesn’t earn its place, you walk away with your data.</p>
         <p class="cta-btns"><a href="#contact" class="btn btn-dark">Start the free trial <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a href="https://wa.me/233274145249" class="btn btn-dark" target="_blank" rel="noopener noreferrer">Chat on WhatsApp <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
       </div>
-      <figure class="cta-photo"><img src="/assets/damang-pit.jpg" alt="The terraced walls of the Damang gold mine pit in Ghana, with a pool of water at its floor" width="1920" height="1080" loading="lazy"/></figure>
+      <div class="cta-mark" aria-hidden="true"><svg viewBox="0 0 60 42" fill="none"><polyline points="5,6 17,36 30,18 43,36 55,6" stroke="#0B1120" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="5" cy="6" r="4" stroke="#0B1120" stroke-width="2"/><circle cx="30" cy="18" r="3.4" stroke="#0B1120" stroke-width="2"/><circle cx="55" cy="6" r="4" stroke="#0B1120" stroke-width="2"/><circle cx="17" cy="36" r="5.5" fill="#0B1120"/><circle cx="17" cy="36" r="2.1" fill="#F59E0B"/><circle cx="43" cy="36" r="5.5" fill="#0B1120"/><circle cx="43" cy="36" r="2.1" fill="#F59E0B"/></svg></div>
     </div>
   </div>
 </section>
@@ -924,13 +923,6 @@ textarea.inp{min-height:150px;resize:vertical;line-height:1.55}
     </div>
     <div class="wordmark" aria-hidden="true"><svg viewBox="0 0 1000 150"><text x="0" y="128" textLength="1000" lengthAdjust="spacing" font-family="Syne, sans-serif" font-weight="700" font-size="170">WorkFlow</text></svg></div>
     <p class="legal"><span>© 2026 WorkFlow Solutions, Kumasi. All rights reserved.</span><span>workflow-app.net</span></p>
-    <ul class="credits" aria-label="Photo credits">
-      <li>Photo: <a href="https://commons.wikimedia.org/wiki/File:Damang_Gold_Mine_01.jpg" target="_blank" rel="noopener noreferrer">Damang gold mine pit</a>, Enock4seth, <a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a></li>
-      <li>Photo: <a href="https://commons.wikimedia.org/wiki/File:EITI_Newmont_Mine_Ghana_001_B003.jpg" target="_blank" rel="noopener noreferrer">Ahafo mine, Ghana</a>, The EITI, <a href="https://creativecommons.org/licenses/by-sa/2.0" target="_blank" rel="noopener noreferrer">CC BY-SA 2.0</a></li>
-      <li>Photo: <a href="https://commons.wikimedia.org/wiki/File:Komfo_Anokye_Teaching_Hospital,_Kumasi,_Ghana.jpg" target="_blank" rel="noopener noreferrer">Komfo Anokye Teaching Hospital</a>, OER Africa, <a href="https://creativecommons.org/licenses/by/2.0" target="_blank" rel="noopener noreferrer">CC BY 2.0</a></li>
-      <li>Photo: <a href="https://commons.wikimedia.org/wiki/File:Modern_market_hall_of_Kejetia_market.jpg" target="_blank" rel="noopener noreferrer">Kejetia market hall</a>, Afus199620, <a href="https://creativecommons.org/publicdomain/zero/1.0/deed.en" target="_blank" rel="noopener noreferrer">CC0</a></li>
-      <li>Photo: <a href="https://commons.wikimedia.org/wiki/File:Kronum_Kumasi_2018-11-08_(130246).jpg" target="_blank" rel="noopener noreferrer">Kumasi from Kronum</a>, Maven Egote, <a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a></li>
-    </ul>
   </div>
 </footer>
 

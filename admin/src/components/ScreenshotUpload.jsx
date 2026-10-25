@@ -47,7 +47,7 @@ export default function ScreenshotUpload({ value, name, onChange }) {
         <div className="aspect-[16/10] w-full shrink-0 overflow-hidden bg-slate-100 sm:w-56">
           {has
             ? <img src={value} alt={`Screenshot of ${name || 'this product'}`} className="h-full w-full object-cover object-left-top" />
-            : <div className="grid h-full place-items-center p-4 text-center text-[13px] text-slate-500">No screenshot yet. The card shows the fallback photo below.</div>}
+            : <div className="grid h-full place-items-center p-4 text-center text-[13px] text-slate-500">No screenshot yet. The card shows the amber background with the platform’s name.</div>}
         </div>
         <div className="min-w-0 space-y-3">
           <input ref={input} id={id} type="file" accept="image/png,image/jpeg,image/webp" className="sr-only"
