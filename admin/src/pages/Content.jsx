@@ -172,6 +172,8 @@ function TopEditor({ draft }) {
       </Card>
 
       <Card title="Headline" sub="The first thing visitors read." section="hero" draft={draft}>
+        <Text label="Badge above the headline (optional)" value={h.badge} max={40} onChange={badge => setH({ badge })} placeholder="e.g. Built in Kumasi"
+          help="Shown in the small pill above the headline, followed by the numbers below." />
         <div className="grid gap-4 sm:grid-cols-2">
           <Text label="Headline, line 1" value={h.headline_line1} max={40} onChange={headline_line1 => setH({ headline_line1 })}
             help="Keep each line to about 12 characters, so the headline stays on two lines on every screen." />
@@ -186,7 +188,11 @@ function TopEditor({ draft }) {
         </div>
       </Card>
 
-      <Card title="Numbers under the headline" sub="Up to four. The first sits large on the amber block beside the photo; the rest follow it as a line." section="hero" draft={draft}>
+      <Card title="Tick points under the buttons" sub="Short promises, each with a tick. Up to four; leave empty to hide them." section="hero" draft={draft}>
+        <Lines label="Tick points" value={h.promises} onChange={promises => setH({ promises })} help="One per line, about 35 characters each" />
+      </Card>
+
+      <Card title="Numbers in the badge" sub="Up to four. They follow the badge above the headline, as a line." section="hero" draft={draft}>
         <ListEditor items={h.stats} onChange={stats => setH({ stats })} max={4} addLabel="Add a number"
           itemLabel={(s, i) => `Number ${i + 1}`} make={() => ({ value: '', label: '' })}
           render={(s, set) => (
@@ -195,6 +201,11 @@ function TopEditor({ draft }) {
               <Text label="What it counts" value={s.label} max={40} onChange={label => set({ label })} />
             </div>
           )} />
+      </Card>
+
+      <Card title="Sectors strip" sub="The band under the top of the page that names who the software is for." section="hero" draft={draft}>
+        <Text label="Heading" value={h.sectors_label} max={80} onChange={sectors_label => setH({ sectors_label })} />
+        <Lines label="Sectors" value={h.sectors} onChange={sectors => setH({ sectors })} help="One per line, up to eight" />
       </Card>
     </>
   )

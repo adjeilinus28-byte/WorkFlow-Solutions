@@ -126,6 +126,28 @@ test('uploaded screenshots replace the amber field, and only site-media images a
   }
 })
 
+test('the badge, tick points and sectors strip are editable, and older content gets the defaults', () => {
+  const c = clone(defaults)
+  Object.assign(c.hero, { badge: 'Made in Accra', promises: ['No card needed'], sectors_label: 'Who we build for', sectors: ['Mines', 'Banks'] })
+  let out = renderHome(home, c, defaults)
+  assert.match(out, /<p class="chip"><span class="dot"><\/span>Made in Accra · 5 platforms live in production<\/p>/)
+  assert.match(out, /<ul class="trust">\n\s*<li><svg[^>]*>.*?<\/svg>No card needed<\/li>\n\s*<\/ul>/)
+  assert.match(out, /<!--cms:sectors-->\n\s*<p class="caps">Who we build for<\/p>\n\s*<ul><li>Mines<\/li><li>Banks<\/li><\/ul>/)
+  assert.doesNotMatch(out.split('<main')[1], /Built in Kumasi|keep Ghana moving|30-day free trial, no card/)
+  // empty: no chip, no tick list
+  Object.assign(c.hero, { badge: '', stats: [], promises: [] })
+  out = renderHome(home, c, defaults)
+  assert.doesNotMatch(out, /<p class="chip"><span class="dot"><\/span>[^<]*<\/p>\n\s*<h1/)
+  assert.doesNotMatch(out, /class="trust"/)
+  // a hero published before these fields existed renders the defaults
+  const old = clone(defaults); for (const k of ['badge', 'promises', 'sectors_label', 'sectors']) delete old.hero[k]
+  assert.equal(renderHome(home, old, defaults), home)
+  // limits
+  Object.assign(c.hero, { badge: 'x'.repeat(41), promises: ['a', 'b', 'c', 'd', 'e'], sectors: [''] })
+  const e = validateContent(c).join('\n')
+  for (const s of ['Badge above the headline', 'at most 4 tick points', 'Sector 1 is empty']) assert.match(e, new RegExp(s))
+})
+
 test('YouTube links of every shape give the video ID', () => {
   for (const u of ['https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'https://youtu.be/dQw4w9WgXcQ?si=abc', 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'https://youtube.com/shorts/dQw4w9WgXcQ', 'dQw4w9WgXcQ'])
     assert.equal(youTubeId(u), 'dQw4w9WgXcQ', u)

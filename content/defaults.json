@@ -6,6 +6,7 @@
     "link_url": ""
   },
   "hero": {
+    "badge": "Built in Kumasi",
     "headline_line1": "Run every site",
     "headline_line2": "from one system.",
     "sub": "Operations software for mines, hospitals, distributors and institutions in Ghana. People, assets, stock, fleet and compliance in one secure platform, live on your own data before you pay a cedi.",
@@ -18,6 +19,20 @@
         "value": "5",
         "label": "Platforms live in production"
       }
+    ],
+    "promises": [
+      "30-day free trial, no card",
+      "Reply and quote in one business day",
+      "Pay by mobile money, bank or card"
+    ],
+    "sectors_label": "Built for the operations that keep Ghana moving",
+    "sectors": [
+      "Gold mining",
+      "Hospitals",
+      "Fleet & haulage",
+      "Retail & distribution",
+      "Schools",
+      "Public bodies"
     ]
   },
   "products": {

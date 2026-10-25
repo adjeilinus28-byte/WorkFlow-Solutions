@@ -95,6 +95,12 @@ export function validateContent(c) {
   if (h.secondary_label) lnk(h.secondary_link, 'Second button link')
   ;(h.stats || []).forEach((s, i) => { need(s.value, `Stat ${i + 1} number`, 8); need(s.label, `Stat ${i + 1} label`, 40) })
   if ((h.stats || []).length > 4) errors.push('Use at most 4 hero stats')
+  maxLen(h.badge, 'Badge above the headline', 40)
+  ;(h.promises || []).forEach((t, i) => need(t, `Tick point ${i + 1}`, 50))
+  if ((h.promises || []).length > 4) errors.push('Use at most 4 tick points under the buttons')
+  maxLen(h.sectors_label, 'Sectors heading', 80)
+  ;(h.sectors || []).forEach((t, i) => need(t, `Sector ${i + 1}`, 30))
+  if ((h.sectors || []).length > 8) errors.push('Use at most 8 sectors')
 
   const p = c.products || {}
   need(p.title, 'Products heading', 80); maxLen(p.note, 'Products note', 60)
@@ -148,16 +154,33 @@ export function validateContent(c) {
 const lower = s => { const t = String(s || ''); return t.charAt(0).toLowerCase() + t.slice(1) }
 const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'
 
-// Two headline lines; the second one is set in amber
+// The badge and the numbers share one chip; two headline lines, the second in amber
 function hero(h, ind) {
   const lines = [h.headline_line1, h.headline_line2].map(l => String(l || '').trim()).filter(Boolean)
-  const facts = (h.stats || []).map(s => `${esc(s.value)} ${esc(lower(s.label))}`).join(' · ')
-  const out = [`${ind}<p class="chip"><span class="dot"></span>Built in Kumasi${facts ? ` · ${facts}` : ''}</p>`]
+  const chip = [String(h.badge || '').trim(), ...(h.stats || []).map(s => `${s.value} ${lower(s.label)}`)].filter(Boolean).map(esc).join(' · ')
+  const out = chip ? [`${ind}<p class="chip"><span class="dot"></span>${chip}</p>`] : []
   out.push(`${ind}<h1 class="hero-title">${lines.map((l, i) => `<span class="line${i === lines.length - 1 && lines.length > 1 ? ' amber' : ''}">${esc(l)}</span>`).join(' ')}</h1>`)
   out.push(`${ind}<p class="hero-sub">${esc(h.sub)}</p>`)
   const second = h.secondary_label ? `<a href="${link(h.secondary_link)}" class="btn btn-ghost">${esc(h.secondary_label)} ${ARROW}</a>` : ''
   out.push(`${ind}<p class="hero-actions"><a href="${link(h.primary_link)}" class="btn btn-primary">${esc(h.primary_label)} ${ARROW}</a>${second}</p>`)
   return out
+}
+
+// The tick points under the hero buttons
+const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>'
+function heroPromises(h, ind) {
+  const items = (h.promises || []).filter(t => String(t).trim())
+  if (!items.length) return ''
+  return [`${ind}<ul class="trust">`, ...items.map(t => `${ind}  <li>${CHECK}${esc(t)}</li>`), `${ind}</ul>`]
+}
+
+// The strip of sectors under the hero
+function sectors(h, ind) {
+  const out = []
+  if (String(h.sectors_label || '').trim()) out.push(`${ind}<p class="caps">${esc(h.sectors_label)}</p>`)
+  const items = (h.sectors || []).filter(t => String(t).trim())
+  if (items.length) out.push(`${ind}<ul>${items.map(t => `<li>${esc(t)}</li>`).join('')}</ul>`)
+  return out.length ? out : ''
 }
 
 const STATUS_CHIP = { live: 'Live', coming_soon: 'Coming soon', custom: 'Custom' }
@@ -305,6 +328,8 @@ function announcement(a) {
 
 const BLOCK_REGIONS = {
   hero: c => ind => hero(c.hero, ind),
+  'hero-promises': c => ind => heroPromises(c.hero, ind),
+  sectors: c => ind => sectors(c.hero, ind),
   products: c => ind => products(c.products, ind),
   'footer-products': c => ind => footerProducts(c.products, ind),
   video: c => ind => video(c.video, ind),
@@ -341,11 +366,12 @@ export function applyContact(html, from, to) {
   return html.replace(pattern, m => map.get(m))
 }
 
-// Missing sections (say, content saved before a new section existed) fall back
+// Missing sections or fields (say, content saved before they existed) fall back
 // to the defaults instead of breaking the page.
+export const sectionWithDefaults = (data, def) => (data && typeof data === 'object' ? { ...def, ...data } : def)
 export function withDefaults(content, defaults) {
   const out = { ...defaults }
-  for (const k of SECTIONS) if (content && content[k] && typeof content[k] === 'object') out[k] = content[k]
+  for (const k of SECTIONS) if (content && content[k] && typeof content[k] === 'object') out[k] = sectionWithDefaults(content[k], defaults[k])
   return out
 }
 

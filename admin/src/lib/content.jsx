@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import template from '../../../index.html?raw'
 import defaults from '../../../content/defaults.json'
-import { renderHome, validateContent, withDefaults } from '../../../shared/render.js'
+import { renderHome, sectionWithDefaults, validateContent, withDefaults } from '../../../shared/render.js'
 import { callFunction, rpc } from './api'
 
 export { defaults }
@@ -56,8 +56,9 @@ export function DraftProvider({ children }) {
   useEffect(() => { load().catch(() => {}) }, [load])
 
   const value = useMemo(() => {
-    const current = name => edits[name] ?? saved?.content?.[name] ?? defaults[name]
-    const dirty = Object.keys(edits).filter(n => !same(edits[n], saved?.content?.[n] ?? defaults[n]))
+    const stored = name => sectionWithDefaults(saved?.content?.[name], defaults[name])
+    const current = name => edits[name] ?? stored(name)
+    const dirty = Object.keys(edits).filter(n => !same(edits[n], stored(n)))
     return {
       loading: !saved && !error,
       error,

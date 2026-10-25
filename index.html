@@ -151,6 +151,7 @@ main:focus{outline:none}
 .hero{position:relative;isolation:isolate;overflow:hidden;padding:clamp(64px,8vw,104px) 0 0;text-align:center}
 .hero::before{content:"";position:absolute;left:50%;top:-180px;z-index:-1;width:min(980px,120vw);height:560px;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(245,158,11,.26),rgba(245,158,11,0));pointer-events:none}
 .hero .wrap{display:flex;flex-direction:column;align-items:center}
+.hero .chip{max-width:100%;white-space:normal;line-height:1.4;border-radius:20px}
 .hero-title{margin-top:28px;font-size:clamp(30px,6.4vw,92px);line-height:1.04;letter-spacing:-.03em}
 .hero-title .line{display:block}
 .hero-title .amber{color:var(--amber)}
@@ -460,11 +461,13 @@ textarea.inp{min-height:150px;resize:vertical;line-height:1.55}
     <p class="hero-sub">Operations software for mines, hospitals, distributors and institutions in Ghana. People, assets, stock, fleet and compliance in one secure platform, live on your own data before you pay a cedi.</p>
     <p class="hero-actions"><a href="#contact" class="btn btn-primary">Book a demo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a href="#products" class="btn btn-ghost">Explore the platforms <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
     <!--/cms:hero-->
+    <!--cms:hero-promises-->
     <ul class="trust">
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>30-day free trial, no card</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Reply and quote in one business day</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Pay by mobile money, bank or card</li>
     </ul>
+    <!--/cms:hero-promises-->
     <div class="dash" aria-label="Example of the WorkFlow dashboard, with illustrative figures" role="img">
       <div class="dash-bar" aria-hidden="true"><i></i><i></i><i></i>app.workflow-app.net / Obuasi site</div>
       <div class="dash-app" aria-hidden="true">
@@ -489,8 +492,10 @@ textarea.inp{min-height:150px;resize:vertical;line-height:1.55}
 
 <section class="strip" id="industries" aria-label="Sectors we serve">
   <div class="wrap">
+    <!--cms:sectors-->
     <p class="caps">Built for the operations that keep Ghana moving</p>
     <ul><li>Gold mining</li><li>Hospitals</li><li>Fleet &amp; haulage</li><li>Retail &amp; distribution</li><li>Schools</li><li>Public bodies</li></ul>
+    <!--/cms:sectors-->
   </div>
 </section>
 
