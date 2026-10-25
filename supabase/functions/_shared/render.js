@@ -50,6 +50,10 @@ export const phoneDigits = v => String(v || '').replace(/\D/g, '')
 // JSON-LD writes the phone with hyphens: +233-27-414-5249
 const phoneLd = v => String(v || '').trim().replace(/\s+/g, '-')
 
+// A screenshot uploaded from the admin: a public file in the project's
+// site-media storage bucket. Nothing else may be used as a card picture.
+export const isMediaUrl = v => /^https:\/\/[a-z0-9]+\.supabase\.co\/storage\/v1\/object\/public\/site-media\/[A-Za-z0-9._\/-]+\.(png|jpe?g|webp)$/i.test(String(v || ''))
+
 // "https://wfs-erp.netlify.app/" → "wfs-erp.netlify.app"
 export const displayUrl = u => String(u || '').replace(/^https?:\/\//i, '').replace(/\/$/, '')
 
@@ -107,6 +111,7 @@ export function validateContent(c) {
     need(it.name, `${n} name`, 60); maxLen(it.short_name, `${n} footer name`, 40); need(it.sector, `${n} sector`, 40)
     need(it.description, `${n} description`, 400)
     if (!ICONS[it.icon]) errors.push(`${n} has no icon`)
+    if (it.image && !isMediaUrl(it.image)) errors.push(`${n} screenshot must be uploaded with the admin's upload button`)
     if (!PRODUCT_STATUSES[it.status]) errors.push(`${n} has no status`)
     if (it.url) { if (!/^https?:\/\//i.test(it.url) || !isLink(it.url)) errors.push(`${n} website must start with https://`) }
     else maxLen(it.link_note, `${n} note`, 40)
@@ -172,11 +177,14 @@ const PHOTOS = {
 const STATUS_CHIP = { live: 'Live', coming_soon: 'Coming soon', custom: 'Custom' }
 const urlLink = u => `<a href="${link(u)}" target="_blank" rel="noopener noreferrer" class="plat-url">${esc(displayUrl(u))}</a>`
 
+// An uploaded screenshot of the platform wins; otherwise a photo of its world
 function platformCard(it, ind) {
   const photo = PHOTOS[it.icon]
-  const pic = photo
-    ? `<img src="${photo.src}" alt="${esc(photo.alt)}" width="1400" height="1050" loading="lazy"/>`
-    : `<span class="plat-word" aria-hidden="true">${esc(it.short_name || it.name)}</span>`
+  const pic = isMediaUrl(it.image)
+    ? `<img class="plat-shot" src="${esc(it.image)}" alt="${esc(`Screenshot of ${it.name}`)}" loading="lazy"/>`
+    : photo
+      ? `<img src="${photo.src}" alt="${esc(photo.alt)}" width="1400" height="1050" loading="lazy"/>`
+      : `<span class="plat-word" aria-hidden="true">${esc(it.short_name || it.name)}</span>`
   const note = it.url ? urlLink(it.url) : it.link_note ? `<span class="plat-note">${esc(it.link_note)}</span>` : ''
   const out = [
     `${ind}<article class="plat rv">`,
@@ -211,11 +219,11 @@ function spaced(open, blocks, close) {
 }
 
 // Live platforms first, then the ones coming soon, then custom ones. A custom
-// platform with a photo is a normal card marked "Custom"; an open-ended
-// custom offer (no photo) is the amber invitation card, always last.
+// platform with a picture is a normal card marked "Custom"; an open-ended
+// custom offer (no picture) is the amber invitation card, always last.
 function products(p, ind) {
   const shown = (p.items || []).filter(it => it.show !== false)
-  const isInvite = it => it.status === 'custom' && !PHOTOS[it.icon]
+  const isInvite = it => it.status === 'custom' && !PHOTOS[it.icon] && !isMediaUrl(it.image)
   const ordered = [...shown.filter(it => it.status === 'live'), ...shown.filter(it => it.status === 'coming_soon'), ...shown.filter(it => it.status === 'custom' && !isInvite(it))]
   const cards = ordered.map(it => platformCard(it, `${ind}  `))
   const custom = shown.filter(isInvite).map(it => customCard(it, `${ind}  `))
