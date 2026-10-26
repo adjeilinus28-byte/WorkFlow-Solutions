@@ -148,6 +148,20 @@ test('the badge, tick points and sectors strip are editable, and older content g
   for (const s of ['Badge above the headline', 'at most 4 tick points', 'Sector 1 is empty']) assert.match(e, new RegExp(s))
 })
 
+test('the footer description is editable, and older content gets the default', () => {
+  const c = clone(defaults)
+  c.contact.footer_about = 'Software for <mines> & hospitals.'
+  let out = renderHome(home, c, defaults)
+  assert.match(out, /<!--cms:footer-about-->\n\s*<p>Software for &lt;mines&gt; &amp; hospitals\.<\/p>\n\s*<!--\/cms:footer-about-->/)
+  c.contact.footer_about = ''
+  out = renderHome(home, c, defaults)
+  assert.match(out, /<!--cms:footer-about--><!--\/cms:footer-about-->/)
+  const old = clone(defaults); delete old.contact.footer_about
+  assert.equal(renderHome(home, old, defaults), home)
+  c.contact.footer_about = 'x'.repeat(241)
+  assert.ok(validateContent(c).some(e => e.includes('Footer description')))
+})
+
 test('YouTube links of every shape give the video ID', () => {
   for (const u of ['https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'https://youtu.be/dQw4w9WgXcQ?si=abc', 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'https://youtube.com/shorts/dQw4w9WgXcQ', 'dQw4w9WgXcQ'])
     assert.equal(youTubeId(u), 'dQw4w9WgXcQ', u)

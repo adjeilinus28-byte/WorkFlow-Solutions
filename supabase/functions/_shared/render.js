@@ -142,6 +142,7 @@ export function validateContent(c) {
   if (!isEmail(ct.email)) errors.push('Contact email isn\'t a valid email address')
   if (!isPhone(ct.whatsapp)) errors.push('WhatsApp number should look like +233 27 414 5249')
   maxLen(ct.location, 'Location', 60); maxLen(ct.response_time, 'Response time', 60)
+  maxLen(ct.footer_about, 'Footer description', 240)
   return errors
 }
 
@@ -320,6 +321,11 @@ function contact(c, ind) {
   return out
 }
 
+// The short description under the logo in the footer
+function footerAbout(c, ind) {
+  return String(c.footer_about || '').trim() ? [`${ind}<p>${esc(c.footer_about)}</p>`] : ''
+}
+
 function announcement(a) {
   if (!a || !a.enabled || !a.text) return ''
   const more = a.link_url && a.link_label ? ` <a href="${link(a.link_url)}">${esc(a.link_label)}</a>` : ''
@@ -336,6 +342,7 @@ const BLOCK_REGIONS = {
   pricing: c => ind => pricing(c.pricing, ind),
   faq: c => ind => faq(c.faq, ind),
   contact: c => ind => contact(c.contact, ind),
+  'footer-about': c => ind => footerAbout(c.contact, ind),
 }
 
 function replaceRegion(html, name, render) {

@@ -336,6 +336,10 @@ function ContactEditor({ draft }) {
           <Text label="Response time" value={c.response_time} max={60} onChange={response_time => setC({ response_time })} />
         </div>
       </Card>
+      <Card title="Footer" sub="The short description under the logo at the bottom of every page." section="contact" draft={draft}>
+        <Area label="Description" value={c.footer_about} max={240} onChange={footer_about => setC({ footer_about })}
+          help="One or two sentences. Leave empty to show only the logo and contact details." />
+      </Card>
       <Card title="Overview video" sub="The “A minute inside the platform” section. It only appears on the site when a video is set." section="video" draft={draft}>
         <Text label="YouTube video link" type="url" value={link} onChange={onLink} mono placeholder="https://www.youtube.com/watch?v=…"
           help={v.youtube_id && /^[A-Za-z0-9_-]{11}$/.test(v.youtube_id) ? `Video ID ${v.youtube_id} — the section will show once published.` : 'Paste the link from YouTube’s Share button. Leave empty to hide the section.'} />
