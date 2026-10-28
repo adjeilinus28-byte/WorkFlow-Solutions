@@ -67,14 +67,21 @@ BEGIN
 END;
 $$;
 
--- For someone who has lost their phone: clears their authenticator, and they
--- set up a new one at their next sign-in. Admins only, never their own (a
--- sole admin who loses theirs removes it in the Supabase dashboard), and only
--- for people with website access.
+-- For someone who has lost their phone: clears the authenticator they set up
+-- here, and they set up a new one at their next sign-in. Admins only, never
+-- their own (a sole admin who loses theirs removes it in the Supabase
+-- dashboard), and only for people with website access.
+--
+-- Logins are shared with the ops platform, so only the authenticator apps
+-- created by the website admin's setup screen (named "WorkFlow website
+-- admin …") are removed. Any other 2-step method on the login, such as one
+-- the ops platform relies on, is never touched: otherwise a website admin
+-- could add an ops user here and strip their ops-platform 2-step.
 CREATE OR REPLACE FUNCTION public.site_user_reset_two_step(p_user uuid)
 RETURNS void
 LANGUAGE plpgsql SECURITY DEFINER SET search_path = public
 AS $$
+DECLARE removed int;
 BEGIN
   PERFORM site_require(ARRAY['admin']);
   IF p_user = auth.uid() THEN
@@ -83,7 +90,12 @@ BEGIN
   IF NOT EXISTS (SELECT 1 FROM site_users WHERE user_id = p_user) THEN
     RAISE EXCEPTION 'That person no longer has access' USING ERRCODE = 'P0002';
   END IF;
-  DELETE FROM auth.mfa_factors WHERE user_id = p_user;
+  DELETE FROM auth.mfa_factors
+  WHERE user_id = p_user AND factor_type = 'totp' AND friendly_name LIKE 'WorkFlow website admin%';
+  GET DIAGNOSTICS removed = ROW_COUNT;
+  IF removed = 0 THEN
+    RAISE EXCEPTION 'Their 2-step wasn''t set up in the website admin, so it can only be reset where it was set up' USING ERRCODE = 'P0002';
+  END IF;
   PERFORM site_log('user.reset_two_step', jsonb_build_object('email', (SELECT email FROM auth.users WHERE id = p_user)));
 END;
 $$;
