@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Check, Copy, Lock, Trash2, UserPlus } from 'lucide-react'
+import { Check, Copy, Lock, RotateCcw, ShieldCheck, Trash2, UserPlus } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { callFunction, date, initials, ROLE_LABELS, rpc, when } from '../lib/api'
 import { PageTitle } from '../components/Layout'
@@ -26,6 +26,11 @@ export default function People() {
     if (!confirm(`Change ${p.email} from ${ROLE_NAMES[p.role]} to ${ROLE_NAMES[role]}?`)) { select.value = p.role; return }
     try { await rpc('site_user_set_role', { p_user: p.user_id, p_role: role }); setNotice({ tone: 'ok', text: `${p.email} is now ${ROLE_NAMES[role]}.` }); load() }
     catch (e) { select.value = p.role; setNotice({ tone: 'error', text: e.message }) }
+  }
+  async function resetTwoStep(p) {
+    if (!confirm(`Reset 2-step sign-in for ${p.email}? They’ll set it up again with their authenticator app the next time they sign in.`)) return
+    try { await rpc('site_user_reset_two_step', { p_user: p.user_id }); setNotice({ tone: 'ok', text: `2-step for ${p.email} is reset. They’ll set it up again when they next sign in.` }); load() }
+    catch (e) { setNotice({ tone: 'error', text: e.message }) }
   }
   async function remove(p) {
     if (!confirm(`Remove ${p.email}’s access to the website admin? Their login itself isn’t deleted.`)) return
@@ -58,6 +63,9 @@ export default function People() {
                         </span>
                         <span className="block truncate text-[13px] text-slate-600">
                           {p.last_sign_in_at ? `Last signed in ${when(p.last_sign_in_at)}` : p.confirmed ? 'Hasn’t signed in yet' : 'Invite not accepted yet'}
+                          {' · '}{p.two_step
+                            ? <span className="inline-flex items-center gap-1 text-emerald-700"><ShieldCheck size={13} aria-hidden="true" />2-step on</span>
+                            : 'Sets up 2-step at next sign-in'}
                         </span>
                       </span>
                     </span>
@@ -68,6 +76,12 @@ export default function People() {
                         {Object.keys(ROLE_NAMES).map(r => <option key={r} value={r}>{ROLE_NAMES[r]}</option>)}
                       </select>
                       {p.created_at && <span className="hidden whitespace-nowrap text-sm text-slate-600 sm:inline">Added {date(p.created_at)}</span>}
+                      {p.two_step && !self && (
+                        <button type="button" className="btn-icon h-10 w-10 text-slate-500 hover:text-navy" onClick={() => resetTwoStep(p)}
+                          aria-label={`Reset 2-step sign-in for ${p.email}`} title="Reset 2-step (lost phone)">
+                          <RotateCcw size={16} aria-hidden="true" />
+                        </button>
+                      )}
                       <button type="button" className="btn-icon h-10 w-10 text-slate-500 hover:text-red-700" disabled={self}
                         onClick={() => remove(p)} aria-label={`Remove access for ${p.email}`} title={self ? 'You can’t remove yourself' : 'Remove access'}>
                         <Trash2 size={16} aria-hidden="true" />
@@ -80,7 +94,7 @@ export default function People() {
           )}
           <p className="flex items-start gap-2.5 bg-slate-100 px-5 py-3.5 text-[13px] text-slate-600">
             <Lock size={15} className="mt-0.5 shrink-0" aria-hidden="true" />
-            Changing a role asks you to confirm. The last admin can’t be demoted or removed, and you can’t remove yourself.
+            Changing a role asks you to confirm. The last admin can’t be demoted or removed, and you can’t remove yourself. Everyone signs in with a code from an authenticator app; reset someone’s 2-step here if they lose their phone.
           </p>
         </div>
 

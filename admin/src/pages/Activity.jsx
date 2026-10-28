@@ -17,6 +17,7 @@ export function describe({ action, detail: d = {} }) {
     case 'user.add': return `gave ${d.email} ${d.role} access`
     case 'user.role': return `changed ${d.email} from ${d.from} to ${d.to}`
     case 'user.remove': return `removed ${d.email}’s access`
+    case 'user.reset_two_step': return `reset 2-step sign-in for ${d.email}`
     default: return action
   }
 }

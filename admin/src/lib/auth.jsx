@@ -10,7 +10,8 @@ const arrivedToSetPassword = /type=(invite|recovery)/.test(window.location.hash)
 
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(undefined)   // undefined = still checking
-  const [me, setMe] = useState(null)                    // { user_id, email, role }
+  const [me, setMe] = useState(null)                    // { user_id, email, role, has_role }
+  const [aal, setAal] = useState(null)                  // { currentLevel, nextLevel }: aal2 once the code is entered
   const [needsPassword, setNeedsPassword] = useState(arrivedToSetPassword)
   const [error, setError] = useState('')
 
@@ -23,18 +24,24 @@ export function AuthProvider({ children }) {
     return () => sub.subscription.unsubscribe()
   }, [])
 
+  // Re-checked whenever the session changes, including after the 2-step code
   useEffect(() => {
-    if (!session) { setMe(null); return }
+    if (!session) { setMe(null); setAal(null); return }
     let live = true
-    rpc('site_me').then(m => { if (live) { setMe(m); setError('') } })
+    Promise.all([rpc('site_me'), supabase.auth.mfa.getAuthenticatorAssuranceLevel()])
+      .then(([m, a]) => {
+        if (!live) return
+        if (a.error) throw a.error
+        setMe(m); setAal(a.data); setError('')
+      })
       .catch(e => { if (live) setError(e.message) })
     return () => { live = false }
-  }, [session?.user?.id])
+  }, [session?.access_token])
 
   const value = {
-    session, me, error, needsPassword,
-    loading: session === undefined || (session && !me && !error),
-    signOut: async () => { await supabase.auth.signOut(); setMe(null) },
+    session, me, aal, error, needsPassword,
+    loading: session === undefined || (session && (!me || !aal) && !error),
+    signOut: async () => { await supabase.auth.signOut(); setMe(null); setAal(null) },
     passwordSet: () => {
       setNeedsPassword(false)
       history.replaceState(null, '', window.location.pathname)

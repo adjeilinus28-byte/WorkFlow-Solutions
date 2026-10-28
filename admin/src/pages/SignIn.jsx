@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { ArrowRight } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { ArrowRight, Check, Copy, Eye, EyeOff, ShieldCheck } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 import { Logo } from '../components/Layout'
@@ -48,6 +48,44 @@ function Shell({ title, sub, children }) {
   )
 }
 
+// A password box with a button to show what's been typed
+function PasswordField({ id, label, autoComplete, value, onChange, invalid, describedBy, help }) {
+  const [shown, setShown] = useState(false)
+  return (
+    <div>
+      <label htmlFor={id} className="label">{label}</label>
+      <div className="relative">
+        <input id={id} type={shown ? 'text' : 'password'} autoComplete={autoComplete} required className="inp pr-12"
+          spellCheck={false} autoCapitalize="off" aria-invalid={invalid || undefined} aria-describedby={describedBy}
+          value={value} onChange={onChange} />
+        <button type="button" onClick={() => setShown(s => !s)} aria-pressed={shown}
+          aria-label={shown ? 'Hide password' : 'Show password'} title={shown ? 'Hide password' : 'Show password'}
+          className="absolute inset-y-0 right-0 grid w-12 place-items-center text-slate-500 hover:text-navy focus-visible:outline-offset-[-3px]">
+          {shown ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
+        </button>
+      </div>
+      {help && <p className="help">{help}</p>}
+    </div>
+  )
+}
+
+// The six digits from the authenticator app
+function CodeField({ value, onChange, invalid }) {
+  return (
+    <div>
+      <label htmlFor="otp" className="label">6-digit code</label>
+      <input id="otp" className="inp text-center font-mono text-2xl tracking-[0.4em]" inputMode="numeric" autoComplete="one-time-code"
+        maxLength={6} required placeholder="000000" aria-invalid={invalid || undefined} aria-describedby={invalid ? 'otp-err' : 'otp-help'}
+        value={value} onChange={e => onChange(e.target.value.replace(/\D/g, '').slice(0, 6))} data-autofocus autoFocus />
+      {invalid
+        ? <p id="otp-err" className="mt-2 text-sm text-red-700">That code didn’t work. Codes change every 30 seconds, so enter the one showing now.</p>
+        : <p id="otp-help" className="help">From your authenticator app. It changes every 30 seconds.</p>}
+    </div>
+  )
+}
+
+const badCode = err => /invalid|expired|code/i.test(String(err?.message))
+
 export function SignIn() {
   const [mode, setMode] = useState('signin')
   const [email, setEmail] = useState('')
@@ -83,9 +121,8 @@ export function SignIn() {
         </div>
         {mode === 'signin' && (
           <div>
-            <label htmlFor="password" className="label">Password</label>
-            <input id="password" type="password" autoComplete="current-password" required className="inp"
-              aria-invalid={wrong || undefined} aria-describedby={wrong ? 'password-err' : undefined} value={password} onChange={e => { setPassword(e.target.value); setWrong(false) }} />
+            <PasswordField id="password" label="Password" autoComplete="current-password" value={password}
+              invalid={wrong} describedBy={wrong ? 'password-err' : undefined} onChange={e => { setPassword(e.target.value); setWrong(false) }} />
             {wrong && <p id="password-err" className="mt-2 text-sm text-red-700">That email and password don’t match. Check both, or reset your password below.</p>}
           </div>
         )}
@@ -126,18 +163,129 @@ export function SetPassword() {
   return (
     <Shell title="Choose your password" sub="You’ll use it with your email to sign in.">
       <form onSubmit={submit} className="space-y-4">
-        <div>
-          <label htmlFor="new-password" className="label">New password</label>
-          <input id="new-password" type="password" autoComplete="new-password" required className="inp" value={password} onChange={e => setPassword(e.target.value)} />
-          <p className="help">At least 10 characters.</p>
-        </div>
-        <div>
-          <label htmlFor="new-password-2" className="label">Type it again</label>
-          <input id="new-password-2" type="password" autoComplete="new-password" required className="inp" value={again} onChange={e => setAgain(e.target.value)} />
-        </div>
+        <PasswordField id="new-password" label="New password" autoComplete="new-password" value={password}
+          onChange={e => setPassword(e.target.value)} help="At least 10 characters." />
+        <PasswordField id="new-password-2" label="Type it again" autoComplete="new-password" value={again} onChange={e => setAgain(e.target.value)} />
         {msg && <Notice tone="error">{msg}</Notice>}
         <button type="submit" className="btn-primary min-h-[48px] w-full" disabled={busy}>{busy ? 'Saving…' : 'Save password'}</button>
       </form>
+    </Shell>
+  )
+}
+
+// First sign-in after 2-step became required: link an authenticator app.
+// Any half-finished setup is cleared first, so a reload starts cleanly.
+export function TwoStepSetup() {
+  const { me, signOut } = useAuth()
+  const [factor, setFactor] = useState(null)   // { id, qr, secret }
+  const [code, setCode] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [wrong, setWrong] = useState(false)
+  const [msg, setMsg] = useState('')
+  const [copied, setCopied] = useState(false)
+
+  useEffect(() => {
+    let live = true
+    ;(async () => {
+      const { data: list } = await supabase.auth.mfa.listFactors()
+      for (const f of list?.all ?? []) {
+        if (f.factor_type === 'totp' && f.status !== 'verified') await supabase.auth.mfa.unenroll({ factorId: f.id })
+      }
+      const { data, error } = await supabase.auth.mfa.enroll({ factorType: 'totp', friendlyName: `WorkFlow website admin (${new Date().toISOString().slice(0, 16)})` })
+      if (!live) return
+      if (error) setMsg(`2-step setup couldn’t start: ${error.message}`)
+      else setFactor({ id: data.id, qr: data.totp.qr_code, secret: data.totp.secret })
+    })()
+    return () => { live = false }
+  }, [])
+
+  async function submit(e) {
+    e.preventDefault()
+    setBusy(true); setWrong(false); setMsg('')
+    const { error } = await supabase.auth.mfa.challengeAndVerify({ factorId: factor.id, code })
+    setBusy(false)
+    if (error) { if (badCode(error)) { setWrong(true); setCode('') } else setMsg(error.message) }
+  }
+  async function copy() {
+    try { await navigator.clipboard.writeText(factor.secret); setCopied(true); setTimeout(() => setCopied(false), 2000) } catch { /* the key stays on screen to copy by hand */ }
+  }
+
+  return (
+    <Shell title="Set up 2-step sign-in" sub="The website admin asks for a code from your phone as well as your password.">
+      <ol className="space-y-6 text-[15px]">
+        <li>
+          <p className="font-semibold text-navy">1. Scan this with an authenticator app</p>
+          <p className="mt-1 text-sm text-slate-600">Google Authenticator, Microsoft Authenticator, 1Password or any app that shows 6-digit codes.</p>
+          <div className="mt-3 grid place-items-center bg-slate-50 p-4">
+            {factor
+              ? <img src={factor.qr} alt="QR code for your authenticator app" width="184" height="184" className="h-[184px] w-[184px] bg-white p-2" />
+              : <span aria-hidden="true" className="skel h-[184px] w-[184px]" />}
+          </div>
+          {factor && (
+            <details className="mt-3 text-sm">
+              <summary className="link cursor-pointer">Can’t scan? Enter a key instead</summary>
+              <span className="mt-2 flex flex-wrap items-center gap-2">
+                <code className="break-all bg-slate-100 px-2.5 py-1.5 font-mono text-[13px] text-navy">{factor.secret}</code>
+                <button type="button" className="btn-ghost min-h-[36px] px-3" onClick={copy}>
+                  {copied ? <><Check size={14} aria-hidden="true" /> Copied</> : <><Copy size={14} aria-hidden="true" /> Copy</>}
+                </button>
+                <span className="sr-only" aria-live="polite">{copied ? 'Key copied' : ''}</span>
+              </span>
+            </details>
+          )}
+        </li>
+        <li>
+          <p className="font-semibold text-navy">2. Enter the code it shows</p>
+          <form onSubmit={submit} className="mt-3 space-y-4">
+            <CodeField value={code} onChange={c => { setCode(c); setWrong(false) }} invalid={wrong} />
+            {msg && <Notice tone="error">{msg}</Notice>}
+            <button type="submit" className="btn-primary min-h-[48px] w-full text-[15px]" disabled={busy || !factor || code.length !== 6}>
+              {busy ? 'Checking…' : <>Turn on 2-step <ShieldCheck size={16} aria-hidden="true" /></>}
+            </button>
+          </form>
+        </li>
+      </ol>
+      <p className="mt-6 bg-slate-100 p-4 text-[13px] leading-relaxed text-slate-600">
+        Signed in as <strong className="break-all">{me?.email}</strong>. If you lose your phone, another website admin can reset your 2-step under People.
+        {' '}<button type="button" className="link" onClick={signOut}>Sign out</button>
+      </p>
+    </Shell>
+  )
+}
+
+// Every sign-in after setup: the code from the app
+export function TwoStepVerify() {
+  const { me, signOut } = useAuth()
+  const [code, setCode] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [wrong, setWrong] = useState(false)
+  const [msg, setMsg] = useState('')
+
+  async function submit(e) {
+    e.preventDefault()
+    setBusy(true); setWrong(false); setMsg('')
+    const { data, error: listErr } = await supabase.auth.mfa.listFactors()
+    const factor = data?.totp?.find(f => f.status === 'verified')
+    const { error } = listErr || !factor
+      ? { error: listErr || new Error('No authenticator is linked to this login. Ask an admin to reset your 2-step.') }
+      : await supabase.auth.mfa.challengeAndVerify({ factorId: factor.id, code })
+    setBusy(false)
+    if (error) { if (factor && badCode(error)) { setWrong(true); setCode('') } else setMsg(error.message) }
+  }
+
+  return (
+    <Shell title="Enter your code" sub="Open your authenticator app for the 6-digit code for the WorkFlow website admin.">
+      <form onSubmit={submit} className="space-y-5">
+        <CodeField value={code} onChange={c => { setCode(c); setWrong(false) }} invalid={wrong} />
+        {msg && <Notice tone="error">{msg}</Notice>}
+        <button type="submit" className="btn-primary min-h-[48px] w-full text-[15px]" disabled={busy || code.length !== 6}>
+          {busy ? 'Checking…' : <>Continue <ArrowRight size={16} aria-hidden="true" /></>}
+        </button>
+      </form>
+      <p className="mt-6 bg-slate-100 p-4 text-[13px] leading-relaxed text-slate-600">
+        Signed in as <strong className="break-all">{me?.email}</strong>. Lost your phone? Another website admin can reset your 2-step under People.
+        {' '}<button type="button" className="link" onClick={signOut}>Sign out</button>
+      </p>
     </Shell>
   )
 }
