@@ -7,15 +7,15 @@ import { Notice } from '../components/fields'
 
 // The brand's W, drawn once as the page opens
 function Motif() {
-  const nodes = [[20, 30, 'ring'], [148, 260, 'hub'], [272, 120, 'ring-sm'], [396, 260, 'hub'], [524, 30, 'ring']]
+  const nodes = [[20, 72, 'ring-sm'], [146, 260, 'hub'], [283, 150, 'ring-sm'], [419, 260, 'hub'], [524, 24, 'lit']]
   return (
     <svg viewBox="0 0 544 300" className="w-full max-w-[520px] overflow-visible" aria-hidden="true">
-      <path d="M20 30 L148 260 L272 120 L396 260 L524 30" fill="none" stroke="rgba(255,255,255,.06)" strokeWidth="10" strokeLinejoin="round" />
-      <path d="M20 30 L148 260 L272 120 L396 260 L524 30" pathLength="1" fill="none" stroke="#F59E0B" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="1" className="animate-draw" />
+      <path d="M20 72 L146 260 L283 150 L419 260 L524 24" fill="none" stroke="rgba(255,255,255,.06)" strokeWidth="10" strokeLinejoin="round" />
+      <path d="M20 72 L146 260 L283 150 L419 260 L524 24" pathLength="1" fill="none" stroke="#F59E0B" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="1" className="animate-draw" />
       {nodes.map(([x, y, kind], i) => (
         <g key={i} className="animate-pop [transform-box:fill-box] [transform-origin:center]" style={{ animationDelay: `${0.35 + i * 0.25}s` }}>
-          {kind === 'hub'
-            ? <><circle cx={x} cy={y} r="26" fill="rgba(245,158,11,.14)" /><circle cx={x} cy={y} r="14" fill="#F59E0B" /><circle cx={x} cy={y} r="5" fill="#0B1120" /></>
+          {kind === 'hub' || kind === 'lit'
+            ? <><circle cx={x} cy={y} r={kind === 'lit' ? 42 : 26} fill="rgba(245,158,11,.14)" /><circle cx={x} cy={y} r="14" fill="#F59E0B" /><circle cx={x} cy={y} r="5" fill="#0B1120" /></>
             : <circle cx={x} cy={y} r={kind === 'ring' ? 12 : 9} fill="#0B1120" stroke="#CBD5E1" strokeWidth="2.5" />}
         </g>
       ))}

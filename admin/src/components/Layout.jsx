@@ -21,15 +21,16 @@ export function Logo({ tag, size = 'md' }) {
   return (
     <span className={`flex min-w-0 items-center ${size === 'sm' ? 'gap-2' : 'gap-2.5'}`}>
       <svg viewBox="0 0 60 42" className={size === 'sm' ? 'h-5 w-7 shrink-0' : 'h-7 w-10 shrink-0'} aria-hidden="true">
-        <polyline points="5,6 17,36 30,18 43,36 55,6" fill="none" stroke="#CBD5E1" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
-        <circle cx="5" cy="6" r="4" fill="none" stroke="#CBD5E1" strokeWidth="1.8" />
-        <circle cx="30" cy="18" r="3.2" fill="none" stroke="#94A3B8" strokeWidth="1.6" />
-        <circle cx="55" cy="6" r="4" fill="none" stroke="#CBD5E1" strokeWidth="1.8" />
-        <circle cx="17" cy="36" r="5.5" fill="#F59E0B" /><circle cx="17" cy="36" r="2.1" fill="#FFFFFF" />
-        <circle cx="43" cy="36" r="5.5" fill="#F59E0B" /><circle cx="43" cy="36" r="2.1" fill="#FFFFFF" />
+        <circle cx="53" cy="6.5" r="6" fill="#F59E0B" fillOpacity="0.22" />
+        <polyline points="5,11 17,36 30,21 43,36 53,6.5" fill="none" stroke="#CBD5E1" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="5" cy="11" r="2.8" fill="none" stroke="#CBD5E1" strokeWidth="1.8" />
+        <circle cx="30" cy="21" r="3.2" fill="none" stroke="#94A3B8" strokeWidth="1.6" />
+        <circle cx="17" cy="36" r="5" fill="#F59E0B" /><circle cx="17" cy="36" r="1.9" fill="#0B1120" />
+        <circle cx="43" cy="36" r="5.5" fill="#F59E0B" /><circle cx="43" cy="36" r="2.1" fill="#0B1120" />
+        <circle cx="53" cy="6.5" r="4.4" fill="#F59E0B" /><circle cx="53" cy="6.5" r="1.6" fill="#0B1120" />
       </svg>
       <span translate="no" className={`whitespace-nowrap font-display font-bold tracking-[-0.02em] text-white ${size === 'sm' ? 'text-[12px]' : 'text-[17px]'}`}>
-        WorkFlow <span className="text-amber">Solutions</span>
+        Work<span className="text-amber">Flow</span> Solutions
       </span>
       {tag && <span className="bg-amber px-2 py-0.5 text-[13px] font-semibold text-navy">{tag}</span>}
     </span>
