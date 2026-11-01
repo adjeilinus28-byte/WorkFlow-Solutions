@@ -340,7 +340,7 @@ function ContactEditor({ draft }) {
         <Area label="Description" value={c.footer_about} max={240} onChange={footer_about => setC({ footer_about })}
           help="One or two sentences. Leave empty to show only the logo and contact details." />
       </Card>
-      <Card title="Overview video" sub="The “A minute inside the platform” section. It only appears on the site when a video is set." section="video" draft={draft}>
+      <Card title="Overview video" sub="The “What we do” video section. It only appears on the site when a video is set." section="video" draft={draft}>
         <Text label="YouTube video link" type="url" value={link} onChange={onLink} mono placeholder="https://www.youtube.com/watch?v=…"
           help={v.youtube_id && /^[A-Za-z0-9_-]{11}$/.test(v.youtube_id) ? `Video ID ${v.youtube_id} — the section will show once published.` : 'Paste the link from YouTube’s Share button. Leave empty to hide the section.'} />
         <Text label="Length shown on the video" value={v.duration} max={8} onChange={duration => setV({ duration })} placeholder="1:00…" />
