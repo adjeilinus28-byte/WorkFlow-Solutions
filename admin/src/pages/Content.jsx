@@ -344,6 +344,11 @@ function ContactEditor({ draft }) {
         <Text label="YouTube video link" type="url" value={link} onChange={onLink} mono placeholder="https://www.youtube.com/watch?v=…"
           help={v.youtube_id && /^[A-Za-z0-9_-]{11}$/.test(v.youtube_id) ? `Video ID ${v.youtube_id} — the section will show once published.` : 'Paste the link from YouTube’s Share button. Leave empty to hide the section.'} />
         <Text label="Length shown on the video" value={v.duration} max={8} onChange={duration => setV({ duration })} placeholder="1:00…" />
+        <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+          <Text label="Small label (optional)" value={v.label} max={40} onChange={label => setV({ label })} placeholder="See it working…" />
+          <Text label="Heading" value={v.title} max={80} onChange={title => setV({ title })} placeholder="What we do, in 71 seconds…"
+            help="Shown above the video. Update it when you change the video." />
+        </div>
       </Card>
     </>
   )

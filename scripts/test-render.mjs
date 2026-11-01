@@ -162,6 +162,20 @@ test('the footer description is editable, and older content gets the default', (
   assert.ok(validateContent(c).some(e => e.includes('Footer description')))
 })
 
+test('the video label and heading are editable, and older content gets the defaults', () => {
+  const c = clone(defaults)
+  Object.assign(c.video, { label: 'New film', title: 'Our <best> work' })
+  let out = renderHome(home, c, defaults)
+  assert.match(out, /<!--cms:video-head-->\s*<p class="chip"><span class="dot"><\/span>New film<\/p>\s*<h2 id="video-title">Our &lt;best&gt; work<\/h2>/)
+  c.video.label = ''
+  out = renderHome(home, c, defaults)
+  assert.match(out, /<!--cms:video-head-->\s*<h2 id="video-title">/)
+  const old = clone(defaults); delete old.video.label; delete old.video.title
+  assert.equal(renderHome(home, old, defaults), home)
+  c.video.title = ''
+  assert.ok(validateContent(c).some(e => e.includes('Video heading is empty')))
+})
+
 test('YouTube links of every shape give the video ID', () => {
   for (const u of ['https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'https://youtu.be/dQw4w9WgXcQ?si=abc', 'https://www.youtube.com/embed/dQw4w9WgXcQ', 'https://youtube.com/shorts/dQw4w9WgXcQ', 'dQw4w9WgXcQ'])
     assert.equal(youTubeId(u), 'dQw4w9WgXcQ', u)

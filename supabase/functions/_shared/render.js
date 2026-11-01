@@ -122,6 +122,7 @@ export function validateContent(c) {
   const v = c.video || {}
   if (v.youtube_id && !isYouTubeId(v.youtube_id)) errors.push('YouTube video ID should be 11 characters — paste the video link and it is picked out for you')
   maxLen(v.duration, 'Video length', 8)
+  maxLen(v.label, 'Video label', 40); need(v.title, 'Video heading', 80)
 
   const pr = c.pricing || {}
   need(pr.title, 'Pricing heading', 80); need(pr.intro, 'Pricing paragraph', 500); maxLen(pr.payment_methods, 'Payment methods line', 200)
@@ -251,6 +252,14 @@ function footerProducts(p, ind) {
     .map(it => `${ind}<li><a href="${link(it.url)}" target="_blank" rel="noopener noreferrer">${esc(it.short_name || it.name)}</a></li>`)
 }
 
+// The small label and the heading above the video
+function videoHead(v, ind) {
+  const out = []
+  if (String(v.label || '').trim()) out.push(`${ind}<p class="chip"><span class="dot"></span>${esc(v.label)}</p>`)
+  out.push(`${ind}<h2 id="video-title">${esc(v.title)}</h2>`)
+  return out
+}
+
 function video(v, ind) {
   const words = durationWords(v.duration)
   return [
@@ -339,6 +348,7 @@ const BLOCK_REGIONS = {
   products: c => ind => products(c.products, ind),
   'footer-products': c => ind => footerProducts(c.products, ind),
   video: c => ind => video(c.video, ind),
+  'video-head': c => ind => videoHead(c.video, ind),
   pricing: c => ind => pricing(c.pricing, ind),
   faq: c => ind => faq(c.faq, ind),
   contact: c => ind => contact(c.contact, ind),
