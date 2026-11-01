@@ -313,6 +313,7 @@ main:focus{outline:none}
 .play-btn{display:grid;place-items:center;width:88px;height:88px;border-radius:50%;background:var(--amber);box-shadow:0 0 0 14px rgba(245,158,11,.2);transition:transform .4s var(--ease)}
 .video-facade:hover .play-btn{transform:scale(1.06)}
 .play-btn svg{width:32px;height:32px;margin-left:4px;fill:var(--ink)}
+@media (max-width:599px){.play-btn{width:64px;height:64px;box-shadow:0 0 0 10px rgba(245,158,11,.2)}.play-btn svg{width:24px;height:24px;margin-left:3px}.video-meta{left:12px;bottom:12px;padding:6px 12px;font-size:13px}}
 .video-meta{position:absolute;left:20px;bottom:20px;padding:8px 14px;border-radius:999px;background:rgba(7,11,20,.8);font-size:14px}
 .video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 
@@ -1057,17 +1058,22 @@ if(motion && 'IntersectionObserver' in window){
 /* ── JUMP TO TOP / BOTTOM ───────────────────
    Shown once the page has scrolled a screen's worth; the up arrow hides at
    the top and the down arrow at the bottom. Focus moves with the jump so
-   keyboard users land where they went. */
+   keyboard users land where they went. They step aside while the video is
+   on screen, so they never sit over the player's controls. */
 (function(){
   var box=document.getElementById('jump'),up=document.getElementById('jump-top'),down=document.getElementById('jump-end');
   if(!box)return;
-  var ticking=false;
+  var ticking=false,overVideo=false;
   function update(){
     ticking=false;
     var y=window.scrollY,max=document.documentElement.scrollHeight-window.innerHeight;
     up.hidden=y<400;
     down.hidden=max-y<400;
-    box.classList.toggle('show',y>=400||!down.hidden&&y>0);
+    box.classList.toggle('show',!overVideo&&(y>=400||!down.hidden&&y>0));
+  }
+  var player=document.querySelector('#video:not([hidden]) .video-frame');
+  if(player&&'IntersectionObserver' in window){
+    new IntersectionObserver(function(entries){overVideo=entries[0].isIntersecting;update()},{threshold:0.25}).observe(player);
   }
   window.addEventListener('scroll',function(){if(!ticking){ticking=true;requestAnimationFrame(update)}},{passive:true});
   window.addEventListener('resize',update,{passive:true});
